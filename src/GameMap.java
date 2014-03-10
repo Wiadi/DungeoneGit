@@ -1,4 +1,8 @@
-
+/**
+ * Stores all map data for the current floor in three two-dimensional grids and
+ * modifies those map data as actions are taken.
+ * @author Andrew Simler
+ */
 public class GameMap
 {
 	private Tile[][][] tiles;
@@ -7,7 +11,15 @@ public class GameMap
 	{
 		tiles=new Tile[width][height][3];
 	}
-	
+	/**
+	 * Moves a tile from one location to an empty location in the same layer.
+	 * @param xStart - x position of the tile to move
+	 * @param xEnd - x position of the target location
+	 * @param yStart - y position of the tile to move
+	 * @param yEnd - y position of the target location
+	 * @param layer - layer in which the tile to move is located
+	 * @return true if the tile was successfully moved, false if it was blocked
+	 */
 	public boolean move(int xStart, int xEnd, int yStart, int yEnd, int layer)
 	{
 		if(tiles[xEnd][yEnd][layer].getType()==0)
@@ -18,7 +30,16 @@ public class GameMap
 		}
 		return false;
 	}
-	
+	/**
+	 * Launches an attack by one Actor tile on another Actor tile, deleting the attacked
+	 * 		tile if its health would be reduced to 0 or below.
+	 * @param xStart - x position of the attacking tile
+	 * @param xEnd - x position of the attacked tile
+	 * @param yStart - y position of the attacking tile
+	 * @param yEnd - y position of the attacked tile
+	 * @param layer - layer in which the tiles are located (always 2, currently)
+	 * @return true if the attack is successful, false if either tile is not an Actor
+	 */
 	public boolean attack(int xStart, int xEnd, int yStart, int yEnd, int layer)
 	{
 		if(tiles[xStart][yStart][layer].getType()>=100)
