@@ -6,9 +6,19 @@
 public class GameMap
 {
 	private Tile[][][] tiles;
+	private int objX;
+	private int objY;
 	public GameMap(int width, int height)
 	{
 		tiles=new Tile[width][height][3];
+		genMap();
+		for(int i=0;i<width;i++)
+			for(int j=0;j<height;j++)
+				if(tiles[i][j][1].getType()==3)
+				{
+					objX=i;
+					objY=j;
+				}					
 	}
 	/**
 	 * Moves a tile from one location to an empty location in the same layer.
@@ -64,5 +74,15 @@ public class GameMap
 		Tile temp=tiles[x][y][layer];
 		tiles[x][y][layer]=toPlace;
 		return temp;
+	}
+	
+	public boolean checkObjective()
+	{
+		return (tiles[objX][objY][2].getType()>=100 && tiles[objX][objY][2].getType()<200);
+	}
+	
+	public void genMap()
+	{
+		
 	}
 }

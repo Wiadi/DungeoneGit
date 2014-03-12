@@ -8,6 +8,5 @@ public class FloorTile extends Tile
 	{
 		super();
 		tileType+=2;
-	}
-	
+	}	
 }

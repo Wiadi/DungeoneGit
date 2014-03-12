@@ -15,6 +15,7 @@ public abstract class Tile
 	 * @return 0 if an empty tile,
 	 * 		   1 if a floor tile,
 	 * 		   2 if a wall tile,
+	 * 		   3 if the objective,
 	 * 		   1xx if an Adventurer,
 	 * 				100 if a Fighter,
 	 * 		   2xx if a Monster,
