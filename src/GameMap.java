@@ -1,12 +1,11 @@
 /**
- * Stores all map data for the current floor in three two-dimensional grids and
- * modifies those map data as actions are taken.
+ * Stores all map data for the current floor in three two-dimensional grids and modifies
+ * those map data as actions are taken.
  * @author Andrew Simler
  */
 public class GameMap
 {
 	private Tile[][][] tiles;
-	
 	public GameMap(int width, int height)
 	{
 		tiles=new Tile[width][height][3];
@@ -32,7 +31,7 @@ public class GameMap
 	}
 	/**
 	 * Launches an attack by one Actor tile on another Actor tile, deleting the attacked
-	 * 		tile if its health would be reduced to 0 or below.
+	 * tile if its health would be reduced to 0 or below.
 	 * @param xStart - x position of the attacking tile
 	 * @param xEnd - x position of the attacked tile
 	 * @param yStart - y position of the attacking tile
@@ -53,7 +52,7 @@ public class GameMap
 	}
 	/**
 	 * Places a specified tile at a location in the map, replacing whatever tile was
-	 * 		previously there.
+	 * previously there.
 	 * @param x - x position at which to place the tile
 	 * @param y - y position at which to place the tile
 	 * @param layer - layer in which to place the tile

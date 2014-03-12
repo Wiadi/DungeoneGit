@@ -1,7 +1,9 @@
-
+/**
+ * The most basic type of Adventurer, a fighter can walk around and hit things.
+ * @author 941923
+ */
 public class Fighter extends Adventurer
 {
-	
 	public Fighter()
 	{
 		super();
@@ -12,21 +14,18 @@ public class Fighter extends Adventurer
 		for(int i=0;i<abilities.length;i++)
 			abilities[i]=false;
 	}
-	
 	public boolean canMoveTo(int xRel, int yRel)
 	{
 		if(Math.abs(xRel)<=1 && Math.abs(yRel)<=1)
 			return true;
 		return false;
 	}
-
 	public boolean canAttack(int xRel, int yRel)
 	{
 		if(Math.abs(xRel)<=1 && Math.abs(yRel)<=1)
 			return true;
 		return false;
-	}
-	
+	}	
 	public boolean canSee(int xRel, int yRel)
 	{
 		if(xRel*xRel+yRel*yRel<=25)

@@ -1,7 +1,9 @@
-
+/**
+ * The most basic type of Monster, a slim can walk around and hit things.
+ * @author 941923
+ */
 public class Slim extends Monster
 {
-	
 	public Slim()
 	{
 		super();
@@ -12,14 +14,12 @@ public class Slim extends Monster
 		for(int i=0;i<abilities.length;i++)
 			abilities[i]=false;
 	}
-	
 	public boolean canMoveTo(int xRel, int yRel)
 	{
 		if(Math.abs(xRel)<=1 && Math.abs(yRel)<=1)
 			return true;
 		return false;
 	}
-
 	public boolean canAttack(int xRel, int yRel)
 	{
 		if(Math.abs(xRel)<=1 && Math.abs(yRel)<=1)
