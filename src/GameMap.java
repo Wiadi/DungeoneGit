@@ -51,7 +51,15 @@ public class GameMap
 		}
 		return false;
 	}
-	
+	/**
+	 * Places a specified tile at a location in the map, replacing whatever tile was
+	 * 		previously there.
+	 * @param x - x position at which to place the tile
+	 * @param y - y position at which to place the tile
+	 * @param layer - layer in which to place the tile
+	 * @param toPlace - tile to place
+	 * @return the tile replaced, or null if there was no tile previously present
+	 */
 	public Tile placeTile(int x, int y, int layer, Tile toPlace)
 	{
 		Tile temp=tiles[x][y][layer];
