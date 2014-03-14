@@ -6,6 +6,14 @@
 public abstract class Tile
 {	
 	protected int tileType;
+	protected final static int EMPTY_TILE=0;
+	protected final static int FLOOR_TILE=1;
+	protected final static int WALL_TILE=2;
+	protected final static int OBJECTIVE_TILE=3;
+	protected final static int ADVENTURER=100;
+	protected final static int FIGHTER=0;
+	protected final static int MONSTER=200;
+	protected final static int SLIM=0;
 	public Tile()
 	{
 		tileType=-1;

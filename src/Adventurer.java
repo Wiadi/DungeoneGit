@@ -7,7 +7,7 @@ public abstract class Adventurer extends Actor
 	public Adventurer()
 	{
 		super();
-		tileType+=100;
+		tileType=ADVENTURER;
 	}
 	/**
 	 * Checks whether an Adventurer can see a given relative location.

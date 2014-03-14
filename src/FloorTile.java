@@ -7,6 +7,6 @@ public class FloorTile extends Tile
 	public FloorTile()
 	{
 		super();
-		tileType+=2;
+		tileType=FLOOR_TILE;
 	}	
 }
