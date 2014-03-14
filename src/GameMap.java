@@ -18,7 +18,7 @@ public class GameMap
 				{
 					objX=i;
 					objY=j;
-				}					
+				}
 	}
 	/**
 	 * Moves a tile from one location to an empty location in the same layer.
@@ -75,12 +75,17 @@ public class GameMap
 		tiles[x][y][layer]=toPlace;
 		return temp;
 	}
-	
+	/**
+	 * Checks whether there is currently an Adventurer standing on the Objective.
+	 * @return true if an Adventurer is standing on the Objective, false otherwise
+	 */
 	public boolean checkObjective()
 	{
 		return (tiles[objX][objY][2].getType()>=100 && tiles[objX][objY][2].getType()<200);
 	}
-	
+	/**
+	 * Generates the starting map layout.
+	 */
 	public void genMap()
 	{
 		
