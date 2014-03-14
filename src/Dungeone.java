@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -17,8 +19,11 @@ public class Dungeone extends Canvas{
 	ArrayList<Actor> mobs;
 	int turn;	//0-Dungeoneer, 1-Dungeonee
 	int[] action;	//0-D'eer, 1-D'ee
+	int[] select;
 	Graphics g;
 	BufferedImage buff;
+	static KeyAdapter key;
+	static KeyEvent event;
 	
 	public static void main(String[] args){
 		Frame frame = new Frame();
@@ -29,6 +34,11 @@ public class Dungeone extends Canvas{
 		frame.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent e){
 				System.exit(0);
+			}
+		});
+		frame.addKeyListener(key = new KeyAdapter(){
+			public void keyPressed(KeyEvent e) {
+				event = e;
 			}
 		});
 		frame.setVisible(true);
@@ -42,12 +52,14 @@ public class Dungeone extends Canvas{
 	}
 	
 	public void init(){
-		map = new GameMap(40,40);//subject to change
+		map = new GameMap(10,10);//subject to change
 		party = new ArrayList<Actor>();
 			party.add(new Fighter());
 		mobs = new ArrayList<Actor>();
 		turn = 0;
 		action = new int[]{15, 5};
+		select = new int[]{0,0};
+		
 		g = this.getGraphics();
 		buff = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 	}
@@ -63,9 +75,13 @@ public class Dungeone extends Canvas{
 	//go until no action
 	//switch turn
 	public void turn(){
+		select = new int[]{0,0};
 		action[turn] += 5;
+		
 		if(action[turn] > 15)
 			action[turn] = 15;
+		if(event != null)
+			System.out.println(event.getKeyChar());
 		while(action[turn] >0){
 			update();
 			action[turn]--;
