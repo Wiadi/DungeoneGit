@@ -7,6 +7,6 @@ public class ObjectiveTile extends Tile
 	public ObjectiveTile()
 	{
 		super();
-		tileType+=4;
+		tileType=OBJECTIVE_TILE;
 	}	
 }

@@ -14,7 +14,7 @@ public class GameMap
 		genMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
-				if(tiles[i][j][1].getType()==3)
+				if(tiles[i][j][1].getType()==Tile.OBJECTIVE_TILE)
 				{
 					objX=i;
 					objY=j;
@@ -31,7 +31,7 @@ public class GameMap
 	 */
 	public boolean move(int xStart, int xEnd, int yStart, int yEnd, int layer)
 	{
-		if(tiles[xEnd][yEnd][layer].getType()==0)
+		if(tiles[xEnd][yEnd][layer].getType()==Tile.EMPTY_TILE)
 		{
 			tiles[xEnd][yEnd][layer]=tiles[xStart][yStart][layer];
 			tiles[xStart][yStart][layer]=new EmptyTile();
@@ -51,9 +51,9 @@ public class GameMap
 	 */
 	public boolean attack(int xStart, int xEnd, int yStart, int yEnd, int layer)
 	{
-		if(tiles[xStart][yStart][layer].getType()>=100)
+		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER)
 		{
-			if((tiles[xStart][yStart][layer].getType()<200 && tiles[xEnd][yEnd][layer].getType()>=200) || (tiles[xStart][yStart][layer].getType()>=200 && tiles[xEnd][yEnd][layer].getType()<200))
+			if((tiles[xStart][yStart][layer].getType()<Tile.MONSTER && tiles[xEnd][yEnd][layer].getType()>=Tile.MONSTER) || (tiles[xStart][yStart][layer].getType()>=Tile.MONSTER && tiles[xEnd][yEnd][layer].getType()<Tile.MONSTER))
 				if(((Actor)tiles[xEnd][yEnd][layer]).takeDamage(((Actor)tiles[xStart][yStart][layer]).getCurrAtt())<=0)
 					tiles[xEnd][yEnd][layer]=new EmptyTile();
 			return true;
@@ -81,7 +81,7 @@ public class GameMap
 	 */
 	public boolean checkObjective()
 	{
-		return (tiles[objX][objY][2].getType()>=100 && tiles[objX][objY][2].getType()<200);
+		return (tiles[objX][objY][2].getType()>=Tile.ADVENTURER && tiles[objX][objY][2].getType()<Tile.MONSTER);
 	}
 	/**
 	 * Generates the starting map layout.

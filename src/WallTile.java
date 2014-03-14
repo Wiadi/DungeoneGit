@@ -6,6 +6,6 @@ public class WallTile extends Tile
 {
 	public WallTile()
 	{
-		tileType+=3;
+		tileType=WALL_TILE;
 	}
 }
