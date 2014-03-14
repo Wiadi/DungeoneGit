@@ -22,7 +22,6 @@ public class Dungeone extends Canvas{
 	int[] select;
 	Graphics g;
 	BufferedImage buff;
-	static KeyAdapter key;
 	static KeyEvent event;
 	
 	public static void main(String[] args){
@@ -36,11 +35,15 @@ public class Dungeone extends Canvas{
 				System.exit(0);
 			}
 		});
-		frame.addKeyListener(key = new KeyAdapter(){
+		KeyAdapter key = new KeyAdapter(){
+			@Override
 			public void keyPressed(KeyEvent e) {
+				System.out.println(e.getKeyChar());
 				event = e;
 			}
-		});
+		};
+		frame.addKeyListener(key);
+		game.addKeyListener(key);
 		frame.setVisible(true);
 		
 		game.init();
@@ -57,7 +60,7 @@ public class Dungeone extends Canvas{
 			party.add(new Fighter());
 		mobs = new ArrayList<Actor>();
 		turn = 0;
-		action = new int[]{15, 5};
+		action = new int[]{15, 0};
 		select = new int[]{0,0};
 		
 		g = this.getGraphics();
@@ -80,11 +83,13 @@ public class Dungeone extends Canvas{
 		
 		if(action[turn] > 15)
 			action[turn] = 15;
-		if(event != null)
-			System.out.println(event.getKeyChar());
 		while(action[turn] >0){
 			update();
-			action[turn]--;
+			if(event != null){
+				System.out.println(event.getKeyChar() + " used");
+				event = null;
+				action[turn]--;
+			}
 		}
 		turn = (turn+1)%2;
 	}
