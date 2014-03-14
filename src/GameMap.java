@@ -1,3 +1,8 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.Scanner;
+
 /**
  * Stores all map data for the current floor in three two-dimensional grids and modifies
  * those map data as actions are taken.
@@ -14,7 +19,7 @@ public class GameMap
 		genMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
-				if(tiles[i][j][1].getType()==Tile.OBJECTIVE_TILE)
+				if(tiles[i][j][1].getType()==Tile.OBJECTIVE)
 				{
 					objX=i;
 					objY=j;
@@ -88,6 +93,43 @@ public class GameMap
 	 */
 	public void genMap()
 	{
-		
+		try
+		{
+			Scanner reader=new Scanner(new File("map.txt"));
+			int layer=0;
+			int x=-1;
+			int y=0;
+			int temp;
+			while(layer<3)
+			{
+				x++;
+				switch(reader.nextInt())
+				{
+					case -2:				layer++;
+											x=-1;
+											y=0;
+											break;
+					case -1:				x=-1;
+											y++;
+											break;
+					case Tile.EMPTY_TILE:	tiles[x][y][layer]=new EmptyTile();
+											break;
+					case Tile.FLOOR_TILE:	tiles[x][y][layer]=new FloorTile();
+											break;
+					case Tile.WALL_TILE:	tiles[x][y][layer]=new WallTile();
+											break;
+					case Tile.OBJECTIVE: 	tiles[x][y][layer]=new ObjectiveTile();
+											break;
+					case Tile.FIGHTER:		tiles[x][y][layer]=new Fighter();
+											break;
+					case Tile.SLIM:			tiles[x][y][layer]=new Slim();
+											break;
+				}
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+			System.out.println("Error - map file not found");
+		}
 	}
 }

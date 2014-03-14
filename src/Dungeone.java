@@ -42,7 +42,7 @@ public class Dungeone extends Canvas{
 	}
 	
 	public void init(){
-		map = new GameMap(40,40);//subject to change
+		map = new GameMap(10,10);//subject to change
 		party = new ArrayList<Actor>();
 			party.add(new Fighter());
 		mobs = new ArrayList<Actor>();
