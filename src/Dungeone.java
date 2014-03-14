@@ -73,6 +73,7 @@ public class Dungeone extends Canvas{
 		turn = (turn+1)%2;
 	}
 	
+	
 	public void paint(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(buff, 0, 0, getWidth(), getHeight(), null);
