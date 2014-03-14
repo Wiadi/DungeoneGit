@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.Scanner;
 
 /**
@@ -99,7 +98,6 @@ public class GameMap
 			int layer=0;
 			int x=-1;
 			int y=0;
-			int temp;
 			while(layer<3)
 			{
 				x++;
