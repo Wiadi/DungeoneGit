@@ -1,15 +1,24 @@
 /**
- * Stores all map data for the current floor in three two-dimensional grids and
- * modifies those map data as actions are taken.
+ * Stores all map data for the current floor in three two-dimensional grids and modifies
+ * those map data as actions are taken.
  * @author Andrew Simler
  */
 public class GameMap
 {
 	private Tile[][][] tiles;
-	
+	private int objX;
+	private int objY;
 	public GameMap(int width, int height)
 	{
 		tiles=new Tile[width][height][3];
+		genMap();
+		for(int i=0;i<width;i++)
+			for(int j=0;j<height;j++)
+				if(tiles[i][j][1].getType()==3)
+				{
+					objX=i;
+					objY=j;
+				}
 	}
 	/**
 	 * Moves a tile from one location to an empty location in the same layer.
@@ -32,7 +41,7 @@ public class GameMap
 	}
 	/**
 	 * Launches an attack by one Actor tile on another Actor tile, deleting the attacked
-	 * 		tile if its health would be reduced to 0 or below.
+	 * tile if its health would be reduced to 0 or below.
 	 * @param xStart - x position of the attacking tile
 	 * @param xEnd - x position of the attacked tile
 	 * @param yStart - y position of the attacking tile
@@ -53,7 +62,7 @@ public class GameMap
 	}
 	/**
 	 * Places a specified tile at a location in the map, replacing whatever tile was
-	 * 		previously there.
+	 * previously there.
 	 * @param x - x position at which to place the tile
 	 * @param y - y position at which to place the tile
 	 * @param layer - layer in which to place the tile
@@ -65,5 +74,20 @@ public class GameMap
 		Tile temp=tiles[x][y][layer];
 		tiles[x][y][layer]=toPlace;
 		return temp;
+	}
+	/**
+	 * Checks whether there is currently an Adventurer standing on the Objective.
+	 * @return true if an Adventurer is standing on the Objective, false otherwise
+	 */
+	public boolean checkObjective()
+	{
+		return (tiles[objX][objY][2].getType()>=100 && tiles[objX][objY][2].getType()<200);
+	}
+	/**
+	 * Generates the starting map layout.
+	 */
+	public void genMap()
+	{
+		
 	}
 }
