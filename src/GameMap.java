@@ -124,6 +124,7 @@ public class GameMap
 											break;
 				}
 			}
+			reader.close();
 		}
 		catch (FileNotFoundException e)
 		{
