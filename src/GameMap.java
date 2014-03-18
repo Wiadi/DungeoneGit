@@ -33,7 +33,7 @@ public class GameMap
 	 * @param layer - layer in which the tile to move is located
 	 * @return true if the tile was successfully moved, false if it was blocked
 	 */
-	public boolean move(int xStart, int xEnd, int yStart, int yEnd, int layer)
+	public boolean move(int xStart, int yStart, int xEnd, int yEnd, int layer)
 	{
 		if(tiles[xEnd][yEnd][layer].getType()==Tile.EMPTY_TILE)
 		{
@@ -53,7 +53,7 @@ public class GameMap
 	 * @param layer - layer in which the tiles are located (always 2, currently)
 	 * @return true if the attack is successful, false if either tile is not an Actor
 	 */
-	public boolean attack(int xStart, int xEnd, int yStart, int yEnd, int layer)
+	public boolean attack(int xStart, int yStart, int xEnd, int yEnd, int layer)
 	{
 		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER)
 		{
@@ -129,6 +129,22 @@ public class GameMap
 		catch (FileNotFoundException e)
 		{
 			System.out.println("Error - map file not found");
+		}
+	}
+	/**
+	 * Temporary "tester" method to check whether various map methods work properly.
+	 */
+	private void dispMap()
+	{
+		for(int x=0;x<tiles.length;x++)
+		{
+			for(int y=0;y<tiles[x].length;y++)
+			{
+				for(int l=0;l<tiles[x][y].length;l++)
+					System.out.print(tiles[x][y][l].getType());
+				System.out.print(" ");
+			}
+			System.out.println();
 		}
 	}
 }
