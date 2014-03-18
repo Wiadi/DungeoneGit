@@ -12,3 +12,4 @@ ABILITIES
 
 OTHER
 ------------
+ - Screen between turns to avoid hotseat screenpeeking
