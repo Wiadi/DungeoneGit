@@ -16,8 +16,6 @@ public class GameMap
 	{
 		tiles=new Tile[width][height][3];
 		genMap();
-		System.out.println(placeTile(5,5,2,new Fighter()).getType());
-		System.out.println(placeTile(2,2,2,new Slim()).getType());
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
 				if(tiles[i][j][1].getType()==Tile.OBJECTIVE)
@@ -25,15 +23,6 @@ public class GameMap
 					objX=i;
 					objY=j;
 				}
-		dispMap();
-		int count=0;
-		while(tiles[5][5][2].getType()>0)
-		{
-			count++;
-			System.out.println(attack(5,5,5,5,2));
-			dispMap();
-		}
-		System.out.println(count);
 	}
 	/**
 	 * Moves a tile from one location to an empty location in the same layer.
