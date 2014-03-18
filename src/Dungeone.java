@@ -27,6 +27,8 @@ public class Dungeone extends Canvas{
 	BufferedImage buff;
 	static KeyEvent event;
 	
+	//int count;
+	
 	public static void main(String[] args){
 		Frame frame = new Frame();
 		Dungeone game = new Dungeone();
@@ -67,8 +69,9 @@ public class Dungeone extends Canvas{
 			party.add(new Fighter());
 		mobs = new ArrayList<Actor>();
 		turn = 0;
-		action = new int[]{15, 0};
+		action = new int[]{10, 0};
 		select = new int[]{0,0};
+		//count = 0;
 		
 		g = this.getGraphics();
 		buff = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -80,10 +83,10 @@ public class Dungeone extends Canvas{
 	 * The Dungeonee wins if an adventurer reaches the objective
 	 */
 	public void run(){
-		while(true){ //map.checkObjective(), party.isEmpty()
+		while(!(map.checkObjective() || party.isEmpty())){
+			update();
 			turn();
 		}
-		//end conditions here, but also to exit turn
 	}
 	
 	/**
@@ -94,16 +97,42 @@ public class Dungeone extends Canvas{
 	public void turn(){
 		select = new int[]{0,0};
 		action[turn] += 5;
-		//ap limit
+		if (action[turn] > 20)
+			action[turn] = 20;
 		
 		if(action[turn] > 15)
 			action[turn] = 15;
-		while(action[turn] >0){
-			update();
+		while(action[turn] >0){ //pass conditions, end conditions
 			if(event != null){
-				System.out.println(event.getKeyChar() + " used");
+				switch(event.getKeyChar()){
+				case 'w':
+					if (select[1] > 0)
+						select[1]--;
+					break;
+				case 's':
+					if (select[1] < 10-1)
+						select[1]++;
+					break;
+				case 'a':
+					if (select[0] > 0)
+						select[0]--;
+					break;
+				case 'd':
+					if (select[0] < 10-1)
+						select[0]++;
+					break;
+				case ' ':
+					action[turn]++;
+					//change turn
+					break;
+				default:
+					switch(event.getKeyCode()){
+					
+					}
+				}
 				event = null;
 				action[turn]--;
+				update();
 			}
 		}
 		turn = (turn+1)%2;
@@ -129,6 +158,7 @@ public class Dungeone extends Canvas{
 		paint(g);
 //		try {Thread.sleep(50l);} 
 //		catch (InterruptedException e) {}
+		//count++;
 	}
 	
 	/**
@@ -138,11 +168,42 @@ public class Dungeone extends Canvas{
 		Graphics2D g = buff.createGraphics();
 		g.setBackground(Color.black);
 		g.clearRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.green);
-		for(int i = 20; i < 200; i += 20)
-			for(int j = 20; j < 200; j += 20)
-				g.drawRect(i, j, 20, 20);
-		g.drawString(""+turn, 0, 12);
-		g.drawString(""+action[turn%2], 0, 24);
+		for(int i = 0; i < 10; i += 1)
+			for(int j = 0; j < 10; j += 1){
+				g.setColor(Color.white);
+				g.drawRect(i*40+100, j*40+40, 40, 40);
+				
+				switch(map.getTile(i, j, 2).tileType){
+					case Tile.WALL_TILE:
+						g.setColor(Color.darkGray);
+						break;
+					case Tile.ADVENTURER:
+						g.setColor(Color.blue);
+						break;
+					case Tile.MONSTER:
+						g.setColor(Color.red);
+						break;
+					default:	
+						switch(map.getTile(i, j, 1).tileType){
+						case Tile.OBJECTIVE:
+							g.setColor(Color.green);
+							break;
+						default:
+							switch(map.getTile(i, j, 0).tileType){
+								case Tile.FLOOR_TILE:
+									g.setColor(Color.lightGray);
+									break;
+								default:
+									g.setColor(Color.black);
+							}
+						}
+				}
+				g.fillRect(i*40+105, j*40+45, 30, 30);
+			}
+		g.setColor(Color.white);
+		g.drawString("Turn: "+turn, 0, 12);
+		g.drawString("AP: "+action[turn%2], 0, 24);
+		g.drawString("Select: " +select[0] + ", " + select[1], 0, 36);
+		//g.drawString("Frames: "+count, 0, 48);
 	}
 }
