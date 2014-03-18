@@ -157,4 +157,24 @@ public class GameMap
 			System.out.println();
 		}
 	}
+	/**
+	 * Teleports the target to a random valid location on the map.
+	 * @param xStart - x location of the Actor causing the teleportation
+	 * @param yStart - y location of the Actor causing the teleportation
+	 * @param xEnd - x location of the target to be teleported
+	 * @param yEnd - y location of the target to be teleported
+	 * @param layer - layer in which the Actor and target are located
+	 * @return true if (xStart, yStart) refers to the location of an Actor with Baleful Teleport, false else
+	 */
+	public boolean baleTele(int xStart, int yStart, int xEnd, int yEnd, int layer)
+	{
+		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER)
+			if(((Actor)tiles[xStart][yStart][layer]).hasAbility(Actor.BALE_TELE))
+			{
+				int x=(int)(Math.random()*tiles.length);
+				while(!move(xEnd,yEnd,x,(int)(Math.random()*tiles[x].length),layer));
+				return true;
+			}
+		return false;
+	}
 }

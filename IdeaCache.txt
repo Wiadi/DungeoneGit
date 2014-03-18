@@ -4,6 +4,7 @@ ADVENTURERS
 MONSTERS
 ------------
  - Imp: 1 HP, Baleful Teleport, (high movement?)
+ - Knight: moves like a chess knight
 
 ABILITIES
 ------------

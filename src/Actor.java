@@ -7,14 +7,19 @@ public abstract class Actor extends Tile
 {
 	protected int baseAttack;
 	protected int currentAttack;
+	protected int attackRange;
 	protected boolean[] abilities;
 	protected int baseHealth;
 	protected int currentHealth;
+	protected int moveRange;
+	private final static int NUM_ABILS=1;
+	public final static int BALE_TELE=0;
 	public Actor()
 	{
 		super();
-		abilities=new boolean[0];
-		tileType+=1;
+		abilities=new boolean[NUM_ABILS];
+		for(int i=0;i<NUM_ABILS;i++)
+			abilities[i]=false;
 	}
 	/**
 	 * Checks whether an Actor can move to a given relative location.
@@ -22,14 +27,24 @@ public abstract class Actor extends Tile
 	 * @param yRel - y position of the target location relative to the Actor
 	 * @return true if the Actor can move to the target location, false otherwise
 	 */
-	public abstract boolean canMoveTo(int xRel, int yRel);
+	public boolean canMoveTo(int xRel, int yRel)
+	{
+		if(Math.abs(xRel)<=moveRange && Math.abs(yRel)<=moveRange)
+			return true;
+		return false;
+	}
 	/**
 	 * Checks whether an Actor can attack a given relative location.
 	 * @param xRel - x position of the target location relative to the Actor
 	 * @param yRel - y position of the target location relative to the Actor
 	 * @return true if the Actor can attack the target location, false otherwise
 	 */
-	public abstract boolean canAttack(int xRel, int yRel);
+	public boolean canAttack(int xRel, int yRel)
+	{
+		if(Math.abs(xRel)<=attackRange && Math.abs(yRel)<=attackRange)
+			return true;
+		return false;
+	}
 	/**
 	 * Checks whether an Actor has a given ability.
 	 * @param abilIndex - index in the ability array of the ability to check
