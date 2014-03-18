@@ -1,0 +1,13 @@
+ADVENTURERS
+------------
+
+MONSTERS
+------------
+ - Imp: 1 HP, Baleful Teleport, (high movement?)
+
+ABILITIES
+------------
+ - Baleful Teleport: forcibly teleports target to a random valid location on the map
+
+OTHER
+------------

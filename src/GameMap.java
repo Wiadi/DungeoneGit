@@ -16,6 +16,8 @@ public class GameMap
 	{
 		tiles=new Tile[width][height][3];
 		genMap();
+		System.out.println(placeTile(5,5,2,new Fighter()).getType());
+		System.out.println(placeTile(2,2,2,new Slim()).getType());
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
 				if(tiles[i][j][1].getType()==Tile.OBJECTIVE)
@@ -23,6 +25,15 @@ public class GameMap
 					objX=i;
 					objY=j;
 				}
+		dispMap();
+		int count=0;
+		while(tiles[5][5][2].getType()>0)
+		{
+			count++;
+			System.out.println(attack(5,5,5,5,2));
+			dispMap();
+		}
+		System.out.println(count);
 	}
 	/**
 	 * Moves a tile from one location to an empty location in the same layer.
@@ -55,11 +66,10 @@ public class GameMap
 	 */
 	public boolean attack(int xStart, int yStart, int xEnd, int yEnd, int layer)
 	{
-		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER)
+		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER && tiles[xEnd][yEnd][layer].getType()>=Tile.ADVENTURER)
 		{
-			if((tiles[xStart][yStart][layer].getType()<Tile.MONSTER && tiles[xEnd][yEnd][layer].getType()>=Tile.MONSTER) || (tiles[xStart][yStart][layer].getType()>=Tile.MONSTER && tiles[xEnd][yEnd][layer].getType()<Tile.MONSTER))
-				if(((Actor)tiles[xEnd][yEnd][layer]).takeDamage(((Actor)tiles[xStart][yStart][layer]).getCurrAtt())<=0)
-					tiles[xEnd][yEnd][layer]=new EmptyTile();
+			if(((Actor)tiles[xEnd][yEnd][layer]).takeDamage(((Actor)tiles[xStart][yStart][layer]).getCurrAtt())<=0)
+				tiles[xEnd][yEnd][layer]=new EmptyTile();
 			return true;
 		}
 		return false;
@@ -78,6 +88,17 @@ public class GameMap
 		Tile temp=tiles[x][y][layer];
 		tiles[x][y][layer]=toPlace;
 		return temp;
+	}
+	/**
+	 * Returns the tile at a given location on the map.
+	 * @param x - x position of the tile to get
+	 * @param y - y position of the tile to get
+	 * @param layer - layer in which the tile to get is located
+	 * @return the tile at the requested location
+	 */
+	public Tile getTile(int x, int y, int layer)
+	{
+		return tiles[x][y][layer];
 	}
 	/**
 	 * Checks whether there is currently an Adventurer standing on the Objective.
@@ -141,7 +162,7 @@ public class GameMap
 			for(int y=0;y<tiles[x].length;y++)
 			{
 				for(int l=0;l<tiles[x][y].length;l++)
-					System.out.print(tiles[x][y][l].getType());
+					System.out.print(tiles[x][y][l].getType()+",");
 				System.out.print(" ");
 			}
 			System.out.println();

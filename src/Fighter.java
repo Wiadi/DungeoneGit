@@ -7,7 +7,7 @@ public class Fighter extends Adventurer
 	public Fighter()
 	{
 		super();
-		tileType+=FIGHTER;
+		tileType=FIGHTER;
 		baseAttack=2;
 		currentAttack=2;
 		baseHealth=10;

@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * Interprets user input to provide game control
  * @author Jacob Ryder
  */
+@SuppressWarnings("serial")
 public class Dungeone extends Canvas{
 	GameMap map;
 	ArrayList<Actor> party;
@@ -121,7 +122,7 @@ public class Dungeone extends Canvas{
 	}
 	
 	/**
-	 * Buffers and displays a new frame to graphical output
+	 * Buffers and displays a new frame
 	 */
 	public void update(){
 		buffer();

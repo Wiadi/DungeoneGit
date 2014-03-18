@@ -7,7 +7,7 @@ public class Slim extends Monster
 	public Slim()
 	{
 		super();
-		tileType+=SLIM;
+		tileType=SLIM;
 		baseAttack=1;
 		currentAttack=1;
 		baseHealth=5;
