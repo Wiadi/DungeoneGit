@@ -10,15 +10,17 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-//JR
-
-@SuppressWarnings("serial")
+/**
+ * Maintains a GameMap and associated Actors
+ * Interprets user input to provide game control
+ * @author Jacob Ryder
+ */
 public class Dungeone extends Canvas{
 	GameMap map;
 	ArrayList<Actor> party;
 	ArrayList<Actor> mobs;
 	int turn;	//0-Dungeoneer, 1-Dungeonee
-	int[] action;	//0-D'eer, 1-D'ee
+	int[] action;	//0-Dungeoneer, 1-Dungeonee
 	int[] select;
 	Graphics g;
 	BufferedImage buff;
@@ -54,8 +56,12 @@ public class Dungeone extends Canvas{
 		super();
 	}
 	
+	
+	/**
+	 * Initializes GameMap, related objects, and graphical output
+	 */
 	public void init(){
-		map = new GameMap(10,10);//subject to change
+		map = new GameMap(10,10);	//subject to change
 		party = new ArrayList<Actor>();
 			party.add(new Fighter());
 		mobs = new ArrayList<Actor>();
@@ -67,6 +73,11 @@ public class Dungeone extends Canvas{
 		buff = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 	}
 
+	/**
+	 * Alternates turns until one of two end conditions are met:
+	 * The Dungeoneer wins if all adventurers are removed from the map
+	 * The Dungeonee wins if an adventurer reaches the objective
+	 */
 	public void run(){
 		while(true){ //map.checkObjective(), party.isEmpty()
 			turn();
@@ -74,12 +85,15 @@ public class Dungeone extends Canvas{
 		//end conditions here, but also to exit turn
 	}
 	
-	//add action
-	//go until no action
-	//switch turn
+	/**
+	 * Interprets a turn for either the Dungeoneer or Dungeonee
+	 * Uses KeyEvents to control actions, each expending Action Points
+	 * Turn ends when the player passes or no Action Points are left
+	 */
 	public void turn(){
 		select = new int[]{0,0};
 		action[turn] += 5;
+		//ap limit
 		
 		if(action[turn] > 15)
 			action[turn] = 15;
@@ -92,26 +106,37 @@ public class Dungeone extends Canvas{
 			}
 		}
 		turn = (turn+1)%2;
+		//add ap
+		//go until no ap
+		//switch turn
 	}
 	
-	
+	/**
+	 * Displays buffered image
+	 * @param g - Graphics object created by Canvas
+	 */
 	public void paint(Graphics g){
 		Graphics2D g2 = (Graphics2D) g;
 		g2.drawImage(buff, 0, 0, getWidth(), getHeight(), null);
 	}
 	
-	
+	/**
+	 * Buffers and displays a new frame to graphical output
+	 */
 	public void update(){
 		buffer();
 		paint(g);
-		try {Thread.sleep(50l);} 
-		catch (InterruptedException e) {}
+//		try {Thread.sleep(50l);} 
+//		catch (InterruptedException e) {}
 	}
 	
+	/**
+	 * Creates an image to be displayed later
+	 */
 	public void buffer(){
 		Graphics2D g = buff.createGraphics();
 		g.setBackground(Color.black);
-		g.clearRect(0, 0, getWidth(), getHeight()); //based on window size
+		g.clearRect(0, 0, getWidth(), getHeight());
 		g.setColor(Color.green);
 		for(int i = 20; i < 200; i += 20)
 			for(int j = 20; j < 200; j += 20)
