@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
 /**
  * Stores all map data for the current floor in three two-dimensional grids and modifies
  * those map data as actions are taken.
@@ -16,6 +15,7 @@ public class GameMap
 	{
 		tiles=new Tile[width][height][3];
 		genMap();
+		dispMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
 				if(tiles[i][j][1].getType()==Tile.OBJECTIVE)
@@ -132,6 +132,12 @@ public class GameMap
 											break;
 					case Tile.SLIM:			tiles[x][y][layer]=new Slim();
 											break;
+					case Tile.IMP:			tiles[x][y][layer]=new Imp();
+											break;
+					case Tile.KNIGHT:		tiles[x][y][layer]=new Knight();
+											break;
+					default:				System.err.println("Invalid tile type found in map data.");
+											break;
 				}
 			}
 			reader.close();
@@ -176,5 +182,32 @@ public class GameMap
 				return true;
 			}
 		return false;
+	}
+	
+	private void randMap()
+	{
+		int x=0;
+		int xi=0;
+		int width=tiles.length;
+		int y=0;
+		int yi=0;
+		int height=tiles[0].length;
+		int type=0;
+		Tile[][][] currRoom=null;
+		while(tiles[width-1][height-1][2]==null)
+		{
+			while(currRoom==null || currRoom.length>width-x || currRoom[0].length>height-y)
+			{
+				type=(int)(Math.random()*Room.NUM_TYPES);
+				currRoom=new Room(type).getLayout();
+			}
+			for(xi=0;xi<currRoom.length;xi++)
+				for(yi=0;yi<currRoom[xi].length;yi++)
+					for(int layer=0;layer<3;layer++)
+						tiles[x+xi][y+yi][layer]=currRoom[xi][yi][layer];
+			x+=xi;
+			y+=yi;
+			currRoom=null;
+		}
 	}
 }
