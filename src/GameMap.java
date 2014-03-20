@@ -196,18 +196,7 @@ public class GameMap
 		Tile[][][] currRoom=null;
 		while(tiles[width-1][height-1][2]==null)
 		{
-			while(currRoom==null || currRoom.length>width-x || currRoom[0].length>height-y)
-			{
-				type=(int)(Math.random()*Room.NUM_TYPES);
-				currRoom=new Room(type).getLayout();
-			}
-			for(xi=0;xi<currRoom.length;xi++)
-				for(yi=0;yi<currRoom[xi].length;yi++)
-					for(int layer=0;layer<3;layer++)
-						tiles[x+xi][y+yi][layer]=currRoom[xi][yi][layer];
-			x+=xi;
-			y+=yi;
-			currRoom=null;
+			
 		}
 	}
 }

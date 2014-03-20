@@ -6,27 +6,27 @@ public class Room
 {
 	private Tile[][][] layout;
 	private String file;
-	public final static int NUM_TYPES=4;
-	private final static int ROOM_4_SQUARE=0;
+	public final static int NUM_TYPES=5;
+	private final static int ROOM_3_SQUARE=0;
 	private final static int CORRIDOR_HORIZONTAL=1;
 	private final static int CORRIDOR_VERTICAL=2;
 	private final static int WALL=3;
+	private final static int CORRIDOR_INTERSECT=4;
 	public Room(int type)
 	{
+		layout=new Tile[5][5][3];
 		switch(type)
 		{
-			case ROOM_4_SQUARE: file="r4sq.txt";
-								layout=new Tile[6][6][3];
+			case ROOM_3_SQUARE: file="r3sq.txt";
 								break;
 			case CORRIDOR_HORIZONTAL: file="chor.txt";
-									  layout=new Tile[1][3][3];
 								      break;
 			case CORRIDOR_VERTICAL: file="cver.txt";
-									layout=new Tile[3][1][3];
 									break;
 			case WALL: file="wall.txt";
-					   layout=new Tile[1][1][3];
 					   break;
+			case CORRIDOR_INTERSECT: file="cx.txt";
+									 break;
 			default: file="";
 					 System.err.println("Invalid room type");
 					 break;
