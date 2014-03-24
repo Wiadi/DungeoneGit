@@ -22,7 +22,8 @@ public class Dungeone extends Canvas{
 	ArrayList<Actor> mobs;
 	int turn;	//0-Dungeoneer, 1-Dungeonee
 	int[] action;	//0-Dungeoneer, 1-Dungeonee
-	int[] select;
+	int[] select; //mobile
+	int[] pick; //fixed
 	Graphics g;
 	BufferedImage buff;
 	static KeyEvent event;
@@ -67,10 +68,13 @@ public class Dungeone extends Canvas{
 		map = new GameMap(10,10);	//subject to change
 		party = new ArrayList<Actor>();
 			party.add(new Fighter());
+			map.placeTile(1, 1, 2, party.get(0));
 		mobs = new ArrayList<Actor>();
+		//map.placeTile(8, 8, 1, new ObjectiveTile());
 		turn = 0;
 		action = new int[]{10, 0};
 		select = new int[]{0,0};
+		pick  = new int[]{-1,-1};
 		//count = 0;
 		
 		g = this.getGraphics();
@@ -96,15 +100,16 @@ public class Dungeone extends Canvas{
 	 */
 	public void turn(){
 		select = new int[]{0,0};
+		pick = new int[]{-1,-1};
 		action[turn] += 5;
 		if (action[turn] > 20)
 			action[turn] = 20;
 		
-		if(action[turn] > 15)
-			action[turn] = 15;
-		while(action[turn] >0){ //pass conditions, end conditions
+		boolean cont = true;
+		while(cont){ //pass conditions, end conditions
 			if(event != null){
 				switch(event.getKeyChar()){
+				//wasd to control select
 				case 'w':
 					if (select[1] > 0)
 						select[1]--;
@@ -121,9 +126,66 @@ public class Dungeone extends Canvas{
 					if (select[0] < 10-1)
 						select[0]++;
 					break;
+				//space to pick a tile
 				case ' ':
-					action[turn]++;
-					//change turn
+					if(pick[0] == -1 && pick[1] == -1){
+						pick[0] = select[0];
+						pick[1] = select[1];
+					}
+					else{
+						pick[0] = -1;
+						pick[1] = -1;
+					}
+					break;
+				//z to move from pick to select
+				case 'z':
+					if(!(pick[0] == -1 && pick[1] == -1)){
+						if(map.getTile(pick[0], pick[1], 2).getType() >= 100) //200 mob
+						if(map.getTile(select[0], select[1], 2).getType() == 0){
+							Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+							if((turn == 0 && picked.getType() >= 200) || (turn == 1 && picked.getType() < 200))
+							if(picked.canMoveTo(select[0] - pick[0], select[1] - pick[1])){
+								map.move(pick[0], pick[1], select[0], select[1], 2);
+								pick[0] = select[0];
+								pick[1] = select[1];
+								action[turn]--;
+							}
+						}
+					}
+					break;
+				//x to have pick attack select 
+				case 'x': //TEST ATTACK
+					//MAP METHODS TEST IF SUCCESSFUL ALREADY
+					if(!(pick[0] == -1 && pick[1] == -1)){
+						if(map.getTile(pick[0], pick[1], 2).getType() >= 100)
+						if(map.getTile(select[0], select[1], 2).getType() >= 100){
+							Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+							if((turn == 0 && picked.getType() >= 200) || (turn == 1 && picked.getType() < 200))
+							if(picked.canAttack(select[0] - pick[0], select[1] - pick[1])){
+								map.attack(pick[0], pick[1], select[0], select[1], 2);
+								pick[0] = -1;
+								pick[1] = -1;
+								action[turn]--;
+							}
+						}
+					}
+					break;
+				//c to place a unit	on select
+				case 'c':
+					if(turn == 0){
+						if(!(select[0] == -1 && select[1] == -1)){
+							if(map.getTile(select[0], select[1], 2).getType() == 0){
+								Slim slim = new Slim();
+								mobs.add(slim);
+								map.placeTile(select[0], select[1], 2, slim);
+								action[turn]--;
+							}
+						}
+					}
+					break;
+				//p to pass turn	
+				case 'p':
+					cont = false;
 					break;
 				default:
 					switch(event.getKeyCode()){
@@ -131,7 +193,14 @@ public class Dungeone extends Canvas{
 					}
 				}
 				event = null;
-				action[turn]--;
+				
+				
+				if(action[turn] <=0)
+					cont = false;
+				if(map.checkObjective() || party.isEmpty()){
+					cont = false;
+					System.out.println("tghin");
+				}
 				update();
 			}
 		}
@@ -172,6 +241,12 @@ public class Dungeone extends Canvas{
 			for(int j = 0; j < 10; j += 1){
 				g.setColor(Color.white);
 				g.drawRect(i*40+100, j*40+40, 40, 40);
+				if(i==select[0] && j==select[1])
+					g.fillRect(i*40+100, j*40+40, 40, 40);
+				if(i==pick[0] && j==pick[1]){
+					g.setColor(Color.green);
+					g.fillRect(i*40+100, j*40+40, 40, 40);
+				}
 				
 				switch(map.getTile(i, j, 2).tileType){
 					case Tile.WALL_TILE:
@@ -204,6 +279,9 @@ public class Dungeone extends Canvas{
 		g.drawString("Turn: "+turn, 0, 12);
 		g.drawString("AP: "+action[turn%2], 0, 24);
 		g.drawString("Select: " +select[0] + ", " + select[1], 0, 36);
+		g.drawString("Selected: " +pick[0] + ", " + pick[1], 0, 48);
 		//g.drawString("Frames: "+count, 0, 48);
+		if(map.checkObjective() || party.isEmpty())
+			g.drawString("Hey someone won", 400, 500);
 	}
 }
