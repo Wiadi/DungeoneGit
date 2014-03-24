@@ -9,6 +9,7 @@ MONSTERS
 ABILITIES
 ------------
  - Baleful Teleport: forcibly teleports target to a random valid location on the map
+ - WalMart Delivery: Places a wall tile on an empty space/maybe displaces and damages another tile
 
 OTHER
 ------------

@@ -20,10 +20,11 @@ public class Dungeone extends Canvas{
 	GameMap map;
 	ArrayList<Actor> party;
 	ArrayList<Actor> mobs;
-	int turn;	//0-Dungeoneer, 1-Dungeonee
-	int[] action;	//0-Dungeoneer, 1-Dungeonee
+	int turn;	//0-Dungeonee, 1-Dungeoneer
+	int[] action;	//0-Dungeonee, 1-Dungeoneer
 	int[] select; //mobile
 	int[] pick; //fixed
+	int state; //0-setup, 1-standard, 2-switch
 	Graphics g;
 	BufferedImage buff;
 	static KeyEvent event;
@@ -44,7 +45,7 @@ public class Dungeone extends Canvas{
 		KeyAdapter key = new KeyAdapter(){
 			@Override
 			public void keyPressed(KeyEvent e) {
-				System.out.println(e.getKeyChar());
+				//System.out.println(e.getKeyChar());
 				event = e;
 			}
 		};
@@ -67,14 +68,16 @@ public class Dungeone extends Canvas{
 	public void init(){
 		map = new GameMap(10,10);	//subject to change
 		party = new ArrayList<Actor>();
-			party.add(new Fighter());
-			map.placeTile(1, 1, 2, party.get(0));
+//			party.add(new Fighter());
+//			map.placeTile(1, 1, 2, party.get(0));
 		mobs = new ArrayList<Actor>();
-		//map.placeTile(8, 8, 1, new ObjectiveTile());
+		map.placeTile(2, 2, 1, new SpawnTile());
+		map.placeTile(8, 8, 1, new ObjectiveTile());
 		turn = 0;
-		action = new int[]{10, 0};
+		action = new int[]{4, 10};
 		select = new int[]{0,0};
 		pick  = new int[]{-1,-1};
+		state = 0;
 		//count = 0;
 		
 		g = this.getGraphics();
@@ -87,7 +90,7 @@ public class Dungeone extends Canvas{
 	 * The Dungeonee wins if an adventurer reaches the objective
 	 */
 	public void run(){
-		while(!(map.checkObjective() || party.isEmpty())){
+		while(state == 0 || !(map.checkObjective() || party.isEmpty())){ //no end during setup
 			update();
 			turn();
 		}
@@ -138,12 +141,12 @@ public class Dungeone extends Canvas{
 					}
 					break;
 				//z to move from pick to select
-				case 'z':
-					if(!(pick[0] == -1 && pick[1] == -1)){
-						if(map.getTile(pick[0], pick[1], 2).getType() >= 100) //200 mob
+				case 'z':	//INEFFECIENT
+					if(pick[0] != -1 && pick[1] != -1){
+						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER) //200 mob
 						if(map.getTile(select[0], select[1], 2).getType() == 0){
 							Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
-							if((turn == 0 && picked.getType() >= 200) || (turn == 1 && picked.getType() < 200))
+							if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
 							if(picked.canMoveTo(select[0] - pick[0], select[1] - pick[1])){
 								map.move(pick[0], pick[1], select[0], select[1], 2);
 								pick[0] = select[0];
@@ -154,17 +157,19 @@ public class Dungeone extends Canvas{
 					}
 					break;
 				//x to have pick attack select 
-				case 'x': //TEST ATTACK
-					//MAP METHODS TEST IF SUCCESSFUL ALREADY
-					if(!(pick[0] == -1 && pick[1] == -1)){
-						if(map.getTile(pick[0], pick[1], 2).getType() >= 100)
-						if(map.getTile(select[0], select[1], 2).getType() >= 100){
+				case 'x': //INEFFICIENT
+					if(pick[0] != -1 && pick[1] != -1){
+						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER)
+						if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
 							Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
-							if((turn == 0 && picked.getType() >= 200) || (turn == 1 && picked.getType() < 200))
+							Actor selected = (Actor) map.getTile(select[0], select[1], 2);
+							if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
 							if(picked.canAttack(select[0] - pick[0], select[1] - pick[1])){
-								map.attack(pick[0], pick[1], select[0], select[1], 2);
-								pick[0] = -1;
-								pick[1] = -1;
+								if(map.attack(pick[0], pick[1], select[0], select[1], 2)) //tests if dead after
+									if(selected.getType() >= Tile.MONSTER)
+										mobs.remove(selected);
+									else
+										party.remove(selected);
 								action[turn]--;
 							}
 						}
@@ -173,41 +178,78 @@ public class Dungeone extends Canvas{
 				//c to place a unit	on select
 				case 'c':
 					if(turn == 0){
+						System.out.println("0");
+						if(state == 0){ 
+							System.out.println("1");
+							if(pick[0] != -1 && pick[1] != -1){
+								System.out.println("2");
+								if(map.getTile(pick[0], pick[1], 2).getType() == Tile.SPAWN_TILE)
+									System.out.println("3");
+									if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
+										System.out.println("4");
+										if(Math.abs(select[0] - pick[0]) <= 1 && Math.abs(select[1] - pick[1]) <= 1){
+											System.out.println("5");
+											Fighter swrd = new Fighter();
+											party.add(swrd);
+											map.placeTile(select[0], select[1], 2, swrd);
+											action[turn]-=3;
+										}
+									}
+							}
+						}
+					}
+					if(turn == 1){ //needs to be able to switch mob type
 						if(!(select[0] == -1 && select[1] == -1)){
-							if(map.getTile(select[0], select[1], 2).getType() == 0){
+							if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
+								//check for adventurer vision
 								Slim slim = new Slim();
 								mobs.add(slim);
 								map.placeTile(select[0], select[1], 2, slim);
-								action[turn]--;
+								action[turn]-=3;
 							}
 						}
 					}
 					break;
 				//p to pass turn	
 				case 'p':
-					cont = false;
+					if(state == 0 || state == 1) //maybe change
+						cont = false;
 					break;
 				default:
 					switch(event.getKeyCode()){
-					
+					//arrows to also control movement
+					case KeyEvent.VK_UP:
+						if (select[1] > 0)
+							select[1]--;
+						break;
+					case KeyEvent.VK_DOWN:
+						if (select[1] < 10-1)
+							select[1]++;
+						break;
+					case KeyEvent.VK_LEFT:
+						if (select[0] > 0)
+							select[0]--;
+						break;
+					case KeyEvent.VK_RIGHT:
+						if (select[0] < 10-1)
+							select[0]++;
+						break;
 					}
 				}
 				event = null;
 				
-				
 				if(action[turn] <=0)
 					cont = false;
-				if(map.checkObjective() || party.isEmpty()){
+				if(state != 0 && (map.checkObjective() || party.isEmpty())){
 					cont = false;
 					System.out.println("tghin");
 				}
 				update();
 			}
 		}
+		if(state == 0 && turn == 1)
+			state = 1;
 		turn = (turn+1)%2;
-		//add ap
-		//go until no ap
-		//switch turn
 	}
 	
 	/**
@@ -248,40 +290,46 @@ public class Dungeone extends Canvas{
 					g.fillRect(i*40+100, j*40+40, 40, 40);
 				}
 				
-				switch(map.getTile(i, j, 2).tileType){
-					case Tile.WALL_TILE:
-						g.setColor(Color.darkGray);
-						break;
-					case Tile.ADVENTURER:
-						g.setColor(Color.blue);
-						break;
-					case Tile.MONSTER:
-						g.setColor(Color.red);
-						break;
-					default:	
-						switch(map.getTile(i, j, 1).tileType){
-						case Tile.OBJECTIVE:
-							g.setColor(Color.green);
+				if(state == 0 || state == 1){
+					switch(map.getTile(i, j, 2).tileType){
+						case Tile.WALL_TILE:
+							g.setColor(Color.darkGray);
 							break;
-						default:
-							switch(map.getTile(i, j, 0).tileType){
-								case Tile.FLOOR_TILE:
-									g.setColor(Color.lightGray);
+						case Tile.ADVENTURER:
+							g.setColor(Color.blue);
+							break;
+						case Tile.MONSTER:
+							g.setColor(Color.red);
+							break;
+						default:	
+							switch(map.getTile(i, j, 1).tileType){
+								case Tile.OBJECTIVE:
+									g.setColor(Color.green);
+									break;
+								case Tile.SPAWN_TILE:
+									g.setColor(Color.cyan);
 									break;
 								default:
-									g.setColor(Color.black);
+									switch(map.getTile(i, j, 0).tileType){
+										case Tile.FLOOR_TILE:
+											g.setColor(Color.lightGray);
+											break;
+										default:
+											g.setColor(Color.black);
+									}
 							}
-						}
+					}
+					g.fillRect(i*40+105, j*40+45, 30, 30);
 				}
-				g.fillRect(i*40+105, j*40+45, 30, 30);
 			}
 		g.setColor(Color.white);
 		g.drawString("Turn: "+turn, 0, 12);
 		g.drawString("AP: "+action[turn%2], 0, 24);
 		g.drawString("Select: " +select[0] + ", " + select[1], 0, 36);
 		g.drawString("Selected: " +pick[0] + ", " + pick[1], 0, 48);
+		g.drawString("State: " +state, 0, 60);
 		//g.drawString("Frames: "+count, 0, 48);
-		if(map.checkObjective() || party.isEmpty())
+		if(state != 0 && (map.checkObjective() || party.isEmpty()))
 			g.drawString("Hey someone won", 400, 500);
 	}
 }
