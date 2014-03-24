@@ -10,6 +10,7 @@ public abstract class Tile
 	public final static int FLOOR_TILE=1;
 	public final static int WALL_TILE=2;
 	public final static int OBJECTIVE=3;
+	public final static int DOOR_TILE=4;
 	public final static int ADVENTURER=100;
 	public final static int FIGHTER=ADVENTURER+0;
 	public final static int MONSTER=200;

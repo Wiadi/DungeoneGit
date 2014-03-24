@@ -4,7 +4,7 @@ import java.util.Scanner;
 /**
  * Stores all map data for the current floor in three two-dimensional grids and modifies
  * those map data as actions are taken.
- * @author Andrew Simler
+ * @author 941923
  */
 public class GameMap
 {
@@ -58,8 +58,10 @@ public class GameMap
 		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER && tiles[xEnd][yEnd][layer].getType()>=Tile.ADVENTURER)
 		{
 			if(((Actor)tiles[xEnd][yEnd][layer]).takeDamage(((Actor)tiles[xStart][yStart][layer]).getCurrAtt())<=0)
+			{
 				tiles[xEnd][yEnd][layer]=new EmptyTile();
-			return true;
+				return true;
+			}
 		}
 		return false;
 	}
@@ -128,6 +130,8 @@ public class GameMap
 											break;
 					case Tile.OBJECTIVE: 	tiles[x][y][layer]=new ObjectiveTile();
 											break;
+					case Tile.DOOR_TILE:	tiles[x][y][layer]=new DoorTile();
+											break;
 					case Tile.FIGHTER:		tiles[x][y][layer]=new Fighter();
 											break;
 					case Tile.SLIM:			tiles[x][y][layer]=new Slim();
@@ -192,9 +196,11 @@ public class GameMap
 		int height=tiles[0].length;
 		int type=0;
 		Room[][] rooms=new Room[width/5][height/5];
-		while(tiles[width-1][height-1][2]==null)
-		{
-			
-		}
+		Room hold=null;
+		for(int xr=0;xr<rooms.length;xr++)
+			for(int yr=0;yr<rooms.length;yr++)
+			{
+				hold=new Room((int)(Math.random()*Room.NUM_TYPES));
+			}
 	}
 }

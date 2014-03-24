@@ -62,6 +62,8 @@ public class Room
 											break;
 					case Tile.OBJECTIVE: 	layout[x][y][layer]=new ObjectiveTile();
 											break;
+					case Tile.DOOR_TILE:	layout[x][y][layer]=new DoorTile();
+											break;
 					case Tile.FIGHTER:		layout[x][y][layer]=new Fighter();
 											break;
 					case Tile.SLIM:			layout[x][y][layer]=new Slim();
