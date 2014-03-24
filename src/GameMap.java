@@ -187,13 +187,11 @@ public class GameMap
 	private void randMap()
 	{
 		int x=0;
-		int xi=0;
 		int width=tiles.length;
 		int y=0;
-		int yi=0;
 		int height=tiles[0].length;
 		int type=0;
-		Tile[][][] currRoom=null;
+		Room[][] rooms=new Room[width/5][height/5];
 		while(tiles[width-1][height-1][2]==null)
 		{
 			
