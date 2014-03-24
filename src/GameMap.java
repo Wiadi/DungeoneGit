@@ -76,6 +76,11 @@ public class GameMap
 	 */
 	public Tile placeTile(int x, int y, int layer, Tile toPlace)
 	{
+		if(toPlace.getType()==Tile.OBJECTIVE)
+		{
+			objX=x;
+			objY=y;
+		}
 		Tile temp=tiles[x][y][layer];
 		tiles[x][y][layer]=toPlace;
 		return temp;
@@ -131,6 +136,8 @@ public class GameMap
 					case Tile.OBJECTIVE: 	tiles[x][y][layer]=new ObjectiveTile();
 											break;
 					case Tile.DOOR_TILE:	tiles[x][y][layer]=new DoorTile();
+											break;
+					case Tile.SPAWN_TILE:	tiles[x][y][layer]=new SpawnTile();
 											break;
 					case Tile.FIGHTER:		tiles[x][y][layer]=new Fighter();
 											break;
@@ -190,17 +197,29 @@ public class GameMap
 	
 	private void randMap()
 	{
-		int x=0;
 		int width=tiles.length;
-		int y=0;
 		int height=tiles[0].length;
 		int type=0;
-		Room[][] rooms=new Room[width/5][height/5];
+		Room[][] rooms=new Room[width/Room.WIDTH][height/Room.HEIGHT];
 		Room hold=null;
+		boolean spawnSet=false;
 		for(int xr=0;xr<rooms.length;xr++)
-			for(int yr=0;yr<rooms.length;yr++)
+			for(int yr=0;yr<rooms[0].length;yr++)
 			{
-				hold=new Room((int)(Math.random()*Room.NUM_TYPES));
+				if(!spawnSet)
+					if((xr==rooms.length-1 && yr==rooms[0].length-1) || (int)(Math.random()*rooms.length*rooms[0].length)==0)
+					{
+						hold=new Room(Room.SPAWN);
+						spawnSet=true;
+					}
+				else
+					hold=new Room((int)(Math.random()*Room.NUM_TYPES)+1);
+				if(xr>0)
+					while(!hold.checkAdj(rooms[xr-1][yr],3))
+						hold=new Room((int)(Math.random()*Room.NUM_TYPES)+1);
+				if(yr>0)
+					while(!hold.checkAdj(rooms[xr][yr-1],0))
+						hold=new Room((int)(Math.random()*Room.NUM_TYPES)+1);
 			}
 	}
 }

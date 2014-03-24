@@ -6,17 +6,24 @@ public class Room
 {
 	private Tile[][][] layout;
 	private String file;
+	private int type;
+	public final static int WIDTH=5;
+	public final static int HEIGHT=5;
 	public final static int NUM_TYPES=5;
-	private final static int ROOM_3_SQUARE=0;
-	private final static int CORRIDOR_HORIZONTAL=1;
-	private final static int CORRIDOR_VERTICAL=2;
-	private final static int WALL=3;
-	private final static int CORRIDOR_INTERSECT=4;
-	public Room(int type)
+	public final static int SPAWN=0;
+	public final static int CORRIDOR_HORIZONTAL=1;
+	public final static int CORRIDOR_VERTICAL=2;
+	public final static int WALL=3;
+	public final static int CORRIDOR_INTERSECT=4;
+	public final static int ROOM_3_SQUARE=5;
+	public Room(int t)
 	{
-		layout=new Tile[5][5][3];
+		layout=new Tile[WIDTH][HEIGHT][3];
+		type=t;
 		switch(type)
 		{
+			case SPAWN: file="spwn.txt";
+						break;
 			case ROOM_3_SQUARE: file="r3sq.txt";
 								break;
 			case CORRIDOR_HORIZONTAL: file="chor.txt";
@@ -64,6 +71,8 @@ public class Room
 											break;
 					case Tile.DOOR_TILE:	layout[x][y][layer]=new DoorTile();
 											break;
+					case Tile.SPAWN_TILE:	layout[x][y][layer]=new SpawnTile();
+											break;
 					case Tile.FIGHTER:		layout[x][y][layer]=new Fighter();
 											break;
 					case Tile.SLIM:			layout[x][y][layer]=new Slim();
@@ -85,5 +94,19 @@ public class Room
 	public Tile[][][] getLayout()
 	{
 		return layout;
+	}
+	
+	public int getType()
+	{
+		return type;
+	}
+	
+	public boolean checkAdj(Room adj, int face)
+	{
+		switch(type)
+		{
+			case SPAWN: 
+		}
+		return false;
 	}
 }
