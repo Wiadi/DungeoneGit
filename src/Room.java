@@ -105,8 +105,32 @@ public class Room
 	{
 		switch(type)
 		{
-			case SPAWN: 
+			case SPAWN:
+			case ROOM_3_SQUARE: int x,y;
+								if(face==0 || face==2)
+								{
+									y=(HEIGHT-1)*face/2;
+										for(x=0;x<WIDTH;x++)
+											for(int layer=0;layer<3;layer++)
+												if(adj.getLayout()[x][HEIGHT-1-y][layer].getType()==Tile.EMPTY_TILE)
+													layout[x][y][layer]=new DoorTile();
+								}
+								else
+								{
+									x=(WIDTH-1)*(face-1)/2;
+									for(y=0;y<HEIGHT;y++)
+										for(int layer=0;layer<3;layer++)
+											if(adj.getLayout()[WIDTH-1-x][y][layer].getType()==Tile.EMPTY_TILE)
+												layout[x][y][layer]=new DoorTile();
+								}
+								return true;
+			case CORRIDOR_INTERSECT: if(face==0 || face==2)
+										for(int layer=0;layer<3;layer++)
+											if(adj.getLayout()[WIDTH/2][(HEIGHT-1)*(1-face/2)][layer].getType()==Tile.EMPTY_TILE)
+												layout[WIDTH/2][(HEIGHT-1)*face/2][layer]=new DoorTile();
+			
 		}
 		return false;
 	}
+	
 }
