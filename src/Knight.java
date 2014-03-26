@@ -1,9 +1,9 @@
 
 public class Knight extends Monster
 {
-	public Knight()
+	public Knight(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=KNIGHT;
 		baseAttack=2;
 		currentAttack=2;

@@ -4,9 +4,9 @@
  */
 public abstract class Adventurer extends Actor
 {
-	public Adventurer()
+	public Adventurer(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=ADVENTURER;
 	}
 	/**

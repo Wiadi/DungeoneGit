@@ -4,9 +4,9 @@
  */
 public class SpawnTile extends Tile
 {
-	public SpawnTile()
+	public SpawnTile(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=SPAWN_TILE;
 	}
 }

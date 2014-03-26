@@ -4,9 +4,9 @@
  */
 public class Imp extends Monster
 {
-	public Imp()
+	public Imp(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=IMP;
 		baseAttack=0;
 		currentAttack=0;

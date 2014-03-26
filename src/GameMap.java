@@ -38,7 +38,7 @@ public class GameMap
 		if(tiles[xEnd][yEnd][layer].getType()==Tile.EMPTY_TILE)
 		{
 			tiles[xEnd][yEnd][layer]=tiles[xStart][yStart][layer];
-			tiles[xStart][yStart][layer]=new EmptyTile();
+			tiles[xStart][yStart][layer]=new EmptyTile(this,xStart,yStart);
 			return true;
 		}
 		return false;
@@ -59,7 +59,7 @@ public class GameMap
 		{
 			if(((Actor)tiles[xEnd][yEnd][layer]).takeDamage(((Actor)tiles[xStart][yStart][layer]).getCurrAtt())<=0)
 			{
-				tiles[xEnd][yEnd][layer]=new EmptyTile();
+				tiles[xEnd][yEnd][layer]=new EmptyTile(this,xEnd,yEnd);
 				return true;
 			}
 		}
@@ -127,25 +127,25 @@ public class GameMap
 					case -1:				x=-1;
 											y++;
 											break;
-					case Tile.EMPTY_TILE:	tiles[x][y][layer]=new EmptyTile();
+					case Tile.EMPTY_TILE:	tiles[x][y][layer]=new EmptyTile(this,x,y);
 											break;
-					case Tile.FLOOR_TILE:	tiles[x][y][layer]=new FloorTile();
+					case Tile.FLOOR_TILE:	tiles[x][y][layer]=new FloorTile(this,x,y);
 											break;
-					case Tile.WALL_TILE:	tiles[x][y][layer]=new WallTile();
+					case Tile.WALL_TILE:	tiles[x][y][layer]=new WallTile(this,x,y);
 											break;
-					case Tile.OBJECTIVE: 	tiles[x][y][layer]=new ObjectiveTile();
+					case Tile.OBJECTIVE: 	tiles[x][y][layer]=new ObjectiveTile(this,x,y);
 											break;
-					case Tile.DOOR_TILE:	tiles[x][y][layer]=new DoorTile();
+					case Tile.DOOR_TILE:	tiles[x][y][layer]=new DoorTile(this,x,y);
 											break;
-					case Tile.SPAWN_TILE:	tiles[x][y][layer]=new SpawnTile();
+					case Tile.SPAWN_TILE:	tiles[x][y][layer]=new SpawnTile(this,x,y);
 											break;
-					case Tile.FIGHTER:		tiles[x][y][layer]=new Fighter();
+					case Tile.FIGHTER:		tiles[x][y][layer]=new Fighter(this,x,y);
 											break;
-					case Tile.SLIM:			tiles[x][y][layer]=new Slim();
+					case Tile.SLIM:			tiles[x][y][layer]=new Slim(this,x,y);
 											break;
-					case Tile.IMP:			tiles[x][y][layer]=new Imp();
+					case Tile.IMP:			tiles[x][y][layer]=new Imp(this,x,y);
 											break;
-					case Tile.KNIGHT:		tiles[x][y][layer]=new Knight();
+					case Tile.KNIGHT:		tiles[x][y][layer]=new Knight(this,x,y);
 											break;
 					default:				System.err.println("Invalid tile type found in map data.");
 											break;
@@ -209,17 +209,22 @@ public class GameMap
 				if(!spawnSet)
 					if((xr==rooms.length-1 && yr==rooms[0].length-1) || (int)(Math.random()*rooms.length*rooms[0].length)==0)
 					{
-						hold=new Room(Room.SPAWN);
+						hold=new Room(this, Room.SPAWN);
 						spawnSet=true;
 					}
 				else
-					hold=new Room((int)(Math.random()*Room.NUM_TYPES)+1);
+					hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
 				if(xr>0)
 					while(!hold.checkAdj(rooms[xr-1][yr],3))
-						hold=new Room((int)(Math.random()*Room.NUM_TYPES)+1);
+						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
 				if(yr>0)
 					while(!hold.checkAdj(rooms[xr][yr-1],0))
-						hold=new Room((int)(Math.random()*Room.NUM_TYPES)+1);
+						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
 			}
+	}
+	
+	public int[] getSize()
+	{
+		return new int[]{tiles.length,tiles[0].length};
 	}
 }

@@ -4,8 +4,9 @@
  */
 public class WallTile extends Tile
 {
-	public WallTile()
+	public WallTile(GameMap m, int x, int y)
 	{
+		super(m,x,y);
 		tileType=WALL_TILE;
 	}
 }
