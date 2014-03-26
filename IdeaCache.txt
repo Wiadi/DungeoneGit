@@ -14,3 +14,5 @@ ABILITIES
 OTHER
 ------------
  - Screen between turns to avoid hotseat screenpeeking
+ - Walls blocking line of sight
+ - Instead of a create button, have a button that marks all viable tiles. Other buttons on a marked tile will spawn instead.
