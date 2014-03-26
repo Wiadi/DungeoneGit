@@ -14,9 +14,9 @@ public abstract class Actor extends Tile
 	protected int moveRange;
 	private final static int NUM_ABILS=1;
 	public final static int BALE_TELE=0;
-	public Actor()
+	public Actor(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		abilities=new boolean[NUM_ABILS];
 		for(int i=0;i<NUM_ABILS;i++)
 			abilities[i]=false;

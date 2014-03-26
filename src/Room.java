@@ -7,6 +7,7 @@ public class Room
 	private Tile[][][] layout;
 	private String file;
 	private int type;
+	private GameMap map;
 	public final static int WIDTH=5;
 	public final static int HEIGHT=5;
 	public final static int NUM_TYPES=5;
@@ -16,10 +17,11 @@ public class Room
 	public final static int WALL=3;
 	public final static int CORRIDOR_INTERSECT=4;
 	public final static int ROOM_3_SQUARE=5;
-	public Room(int t)
+	public Room(GameMap m,int t)
 	{
 		layout=new Tile[WIDTH][HEIGHT][3];
 		type=t;
+		map=m;
 		switch(type)
 		{
 			case SPAWN: file="spwn.txt";
@@ -61,25 +63,25 @@ public class Room
 					case -1:				x=-1;
 											y++;
 											break;
-					case Tile.EMPTY_TILE:	layout[x][y][layer]=new EmptyTile();
+					case Tile.EMPTY_TILE:	layout[x][y][layer]=new EmptyTile(map,x,y);
 											break;
-					case Tile.FLOOR_TILE:	layout[x][y][layer]=new FloorTile();
+					case Tile.FLOOR_TILE:	layout[x][y][layer]=new FloorTile(map,x,y);
 											break;
-					case Tile.WALL_TILE:	layout[x][y][layer]=new WallTile();
+					case Tile.WALL_TILE:	layout[x][y][layer]=new WallTile(map,x,y);
 											break;
-					case Tile.OBJECTIVE: 	layout[x][y][layer]=new ObjectiveTile();
+					case Tile.OBJECTIVE: 	layout[x][y][layer]=new ObjectiveTile(map,x,y);
 											break;
-					case Tile.DOOR_TILE:	layout[x][y][layer]=new DoorTile();
+					case Tile.DOOR_TILE:	layout[x][y][layer]=new DoorTile(map,x,y);
 											break;
-					case Tile.SPAWN_TILE:	layout[x][y][layer]=new SpawnTile();
+					case Tile.SPAWN_TILE:	layout[x][y][layer]=new SpawnTile(map,x,y);
 											break;
-					case Tile.FIGHTER:		layout[x][y][layer]=new Fighter();
+					case Tile.FIGHTER:		layout[x][y][layer]=new Fighter(map,x,y);
 											break;
-					case Tile.SLIM:			layout[x][y][layer]=new Slim();
+					case Tile.SLIM:			layout[x][y][layer]=new Slim(map,x,y);
 											break;
-					case Tile.IMP:			layout[x][y][layer]=new Imp();
+					case Tile.IMP:			layout[x][y][layer]=new Imp(map,x,y);
 											break;
-					case Tile.KNIGHT:		layout[x][y][layer]=new Knight();
+					case Tile.KNIGHT:		layout[x][y][layer]=new Knight(map,x,y);
 											break;
 				}
 			}
@@ -105,8 +107,32 @@ public class Room
 	{
 		switch(type)
 		{
-			case SPAWN: 
+			case SPAWN:
+			case ROOM_3_SQUARE: int x,y;
+								if(face==0 || face==2)
+								{
+									y=(HEIGHT-1)*face/2;
+										for(x=0;x<WIDTH;x++)
+											for(int layer=0;layer<3;layer++)
+												if(adj.getLayout()[x][HEIGHT-1-y][layer].getType()==Tile.EMPTY_TILE)
+													layout[x][y][layer]=new DoorTile(map,x,y);
+								}
+								else
+								{
+									x=(WIDTH-1)*(face-1)/2;
+									for(y=0;y<HEIGHT;y++)
+										for(int layer=0;layer<3;layer++)
+											if(adj.getLayout()[WIDTH-1-x][y][layer].getType()==Tile.EMPTY_TILE)
+												layout[x][y][layer]=new DoorTile(map,x,y);
+								}
+								return true;
+			case CORRIDOR_INTERSECT: if(face==0 || face==2)
+										for(int layer=0;layer<3;layer++)
+											if(adj.getLayout()[WIDTH/2][(HEIGHT-1)*(1-face/2)][layer].getType()==Tile.EMPTY_TILE)
+												layout[WIDTH/2][(HEIGHT-1)*face/2][layer]=new DoorTile(map,WIDTH/2,(HEIGHT-1)*face/2);
+			
 		}
 		return false;
 	}
+	
 }

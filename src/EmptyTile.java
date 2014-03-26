@@ -4,9 +4,9 @@
  */
 public class EmptyTile extends Tile
 {
-	public EmptyTile()
+	public EmptyTile(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=EMPTY_TILE;
 	}
 }

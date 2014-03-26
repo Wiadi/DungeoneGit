@@ -4,9 +4,9 @@
  */
 public class ObjectiveTile extends Tile
 {
-	public ObjectiveTile()
+	public ObjectiveTile(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=OBJECTIVE;
 	}	
 }

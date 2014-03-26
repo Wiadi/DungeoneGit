@@ -4,9 +4,9 @@
  */
 public abstract class Monster extends Actor
 {
-	public Monster()
+	public Monster(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=MONSTER;
 	}
 }

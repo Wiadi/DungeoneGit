@@ -5,9 +5,9 @@
 public class DoorTile extends Tile
 {
 	private boolean open;
-	public DoorTile()
+	public DoorTile(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=DOOR_TILE;
 		open=false;
 	}

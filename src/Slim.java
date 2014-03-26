@@ -4,9 +4,9 @@
  */
 public class Slim extends Monster
 {
-	public Slim()
+	public Slim(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=SLIM;
 		baseAttack=1;
 		currentAttack=1;

@@ -4,9 +4,9 @@
  */
 public class FloorTile extends Tile
 {
-	public FloorTile()
+	public FloorTile(GameMap m, int x, int y)
 	{
-		super();
+		super(m,x,y);
 		tileType=FLOOR_TILE;
 	}	
 }
