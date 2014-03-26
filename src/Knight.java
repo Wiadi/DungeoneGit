@@ -11,8 +11,8 @@ public class Knight extends Monster
 		baseHealth=10;
 		currentHealth=10;
 	}
-	public boolean canMoveTo(int xRel, int yRel)
+	public boolean canMoveTo(int x, int y)
 	{
-		return ((Math.abs(xRel)==1 && Math.abs(yRel)==2) || (Math.abs(xRel)==2 && Math.abs(yRel)==1));
+		return ((Math.abs(x-xPos)==1 && Math.abs(y-yPos)==2) || (Math.abs(x-xPos)==2 && Math.abs(y-yPos)==1));
 	}
 }

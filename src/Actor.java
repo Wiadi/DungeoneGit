@@ -27,9 +27,9 @@ public abstract class Actor extends Tile
 	 * @param yRel - y position of the target location relative to the Actor
 	 * @return true if the Actor can move to the target location, false otherwise
 	 */
-	public boolean canMoveTo(int xRel, int yRel)
+	public boolean canMoveTo(int x, int y)
 	{
-		if(Math.abs(xRel)<=moveRange && Math.abs(yRel)<=moveRange)
+		if(Math.abs(x-xPos)<=moveRange && Math.abs(y-yPos)<=moveRange)
 			return true;
 		return false;
 	}
@@ -39,9 +39,9 @@ public abstract class Actor extends Tile
 	 * @param yRel - y position of the target location relative to the Actor
 	 * @return true if the Actor can attack the target location, false otherwise
 	 */
-	public boolean canAttack(int xRel, int yRel)
+	public boolean canAttack(int x, int y)
 	{
-		if(Math.abs(xRel)<=attackRange && Math.abs(yRel)<=attackRange)
+		if(Math.abs(x-xPos)<=attackRange && Math.abs(y-yPos)<=attackRange)
 			return true;
 		return false;
 	}

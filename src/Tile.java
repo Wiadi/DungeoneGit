@@ -34,13 +34,24 @@ public abstract class Tile
 	 * 		   1 if a floor tile,
 	 * 		   2 if a wall tile,
 	 * 		   3 if the objective,
+	 * 		   4 if a door tile,
+	 * 		   5 if the spawn tile,
 	 * 		   1xx if an Adventurer,
 	 * 				100 if a Fighter,
 	 * 		   2xx if a Monster,
 	 * 				200 if a Slim
+	 * 				201 if an Imp
+	 * 				202 if a Knight
 	 */
 	public int getType()
 	{
 		return tileType;
+	}
+	
+	public Tile changePos(int x, int y)
+	{
+		xPos=x;
+		yPos=y;
+		return this;
 	}
 }

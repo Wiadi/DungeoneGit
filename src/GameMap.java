@@ -37,7 +37,7 @@ public class GameMap
 	{
 		if(tiles[xEnd][yEnd][layer].getType()==Tile.EMPTY_TILE)
 		{
-			tiles[xEnd][yEnd][layer]=tiles[xStart][yStart][layer];
+			tiles[xEnd][yEnd][layer]=tiles[xStart][yStart][layer].changePos(xEnd,yEnd);
 			tiles[xStart][yStart][layer]=new EmptyTile(this,xStart,yStart);
 			return true;
 		}
