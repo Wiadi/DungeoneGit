@@ -14,13 +14,8 @@ public class Fighter extends Adventurer
 		baseHealth=10;
 		currentHealth=10;
 		moveRange=1;
+		visionRange=5;
 		for(int i=0;i<abilities.length;i++)
 			abilities[i]=false;
-	}
-	public boolean canSee(int xRel, int yRel)
-	{
-		if(xRel*xRel+yRel*yRel<=25)
-			return true;
-		return false;
 	}
 }
