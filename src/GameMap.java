@@ -15,7 +15,7 @@ public class GameMap
 	{
 		tiles=new Tile[width][height][3];
 		genMap();
-		dispMap();
+		//dispMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
 				if(tiles[i][j][1].getType()==Tile.OBJECTIVE)
@@ -111,7 +111,7 @@ public class GameMap
 	{
 		try
 		{
-			Scanner reader=new Scanner(new File("map.txt"));
+			Scanner reader=new Scanner(new File("demo_map.txt"));
 			int layer=0;
 			int x=-1;
 			int y=0;
