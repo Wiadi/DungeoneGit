@@ -122,7 +122,7 @@ public class Dungeone extends Canvas{
 				//System.out.println(event.getKeyChar());
 				if (state == 2)
 					state = 1;
-				if (state != 2){
+				else if (state != 2){
 				switch(event.getKeyChar()){
 				//wasd to control select
 				case 'w':
@@ -281,10 +281,10 @@ public class Dungeone extends Canvas{
 			//System.out.println(cont);
 		}//while(cont
 		
-		if(state == 0 && turn == 1)
-			state = 1;
-		if(state == 1)
+		if(state == 0 || state == 1)
 			state = 2;
+		else if(state == 2)
+			state = 1;
 		turn = (turn+1)%2;
 		update();
 	}
