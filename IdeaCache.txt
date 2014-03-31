@@ -1,18 +1,32 @@
 ADVENTURERS
 ------------
+Thieves, with higher move and vision
+Class that can resurrect at spawn (themselves? fellow adventurers?
+Ranged Attack
+HP Regen and/or Targeted heal
 
 MONSTERS
 ------------
  - Imp: 1 HP, Baleful Teleport, (high movement?)
+ 		Alternate: Teleport assailent when attacked?
  - Knight: moves like a chess knight
 
 ABILITIES
 ------------
  - Baleful Teleport: forcibly teleports target to a random valid location on the map
- - WalMart Delivery: Places a wall tile on an empty space/maybe displaces and damages another tile
+ - Wall Placement: Places a wall tile on an empty space/maybe displaces and damages another tile
+ 		Note: If it extends beyond layer 2, this could mess up objectives, spawn, treasure, doors, etc
+ - Passive resets on kill or something like that
+
+ITEMS
+------------
+- *Slayer: Additional damage/instant kill against certain enemy types (random generation?)
 
 OTHER
 ------------
- - Screen between turns to avoid hotseat screenpeeking
- - Walls blocking line of sight
+ - Screen between turns to avoid hotseat screenpeeking - Check
+ - Walls blocking line of sight - Check
  - Instead of a create button, have a button that marks all viable tiles. Other buttons on a marked tile will spawn instead.
+ - Continual vision at spawn - give spawnTile a canSee method
+ - Change spawn's name to Enter, or something else that sounds less like a monster thing
+ - Information about selected tile

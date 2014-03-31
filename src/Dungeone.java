@@ -73,9 +73,9 @@ public class Dungeone extends Canvas{
 //			map.placeTile(1, 1, 2, party.get(0));
 		mobs = new ArrayList<Monster>();
 		map.placeTile(2, 2, 1, new SpawnTile(map, 2, 2));
-		//map.placeTile(8, 8, 1, new ObjectiveTile(map, 8, 8));
+		map.placeTile(20, 19, 1, new ObjectiveTile(map, 20, 19));
 		turn = 0;
-		action = new int[]{4, 10};
+		action = new int[]{4, 0};
 		select = new int[]{0,0};
 		pick  = new int[]{-1,-1};
 		state = 0;
@@ -119,7 +119,7 @@ public class Dungeone extends Canvas{
 			//System.out.println("3"); //logic error here
 			//update();
 			if(event != null){
-				System.out.println(event.getKeyChar());
+				//System.out.println(event.getKeyChar());
 				if (state == 2)
 					state = 1;
 				if (state != 2){
@@ -186,7 +186,7 @@ public class Dungeone extends Canvas{
 										action[turn]--;
 									}
 							}
-							if(map.getTile(select[0], select[1], 2).getType() == Tile.DOOR_TILE){
+							else if(map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE){
 								Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
 								DoorTile selected = (DoorTile) map.getTile(select[0], select[1], 1);
 								//DoorTile selected2 = (DoorTile) map.getTile(select[0], select[1], 2);
@@ -233,7 +233,7 @@ public class Dungeone extends Canvas{
 									Slim slim = new Slim(map, select[0], select[1]);
 									mobs.add(slim);
 									map.placeTile(select[0], select[1], 2, slim);
-									action[turn]-=3;
+									action[turn]-=5;
 								}
 							}
 						}
@@ -345,11 +345,7 @@ public class Dungeone extends Canvas{
 						else if(map.getTile(i, j, 2).tileType == Tile.WALL_TILE)
 							g.setColor(Color.darkGray);
 						else if(map.getTile(i, j, 1).tileType == Tile.DOOR_TILE){
-							if(((DoorTile) map.getTile(i, j, 1)).isOpen()){ //mark if open
-								g.setColor(Color.black);
-								g.drawLine(i*15+100, j*15+40, i*15+115, j*15+55);
-							}
-							g.setColor(new Color(100, 100, 30)); //brown
+							g.setColor(new Color(110, 63, 25)); //brown
 						}
 						else if(map.getTile(i, j, 1).tileType == Tile.SPAWN_TILE)
 							g.setColor(Color.cyan);
@@ -357,9 +353,9 @@ public class Dungeone extends Canvas{
 							g.setColor(Color.lightGray);
 						else
 							g.setColor(Color.black);
-						g.fillRect(i*15+102, j*15+42, 10, 10);
+						g.fillRect(i*15+102, j*15+43, 10, 10);
+						
 					}
-					//System.out.println(i + " " + j + " " + g.getColor().getRGB());
 				}
 				
 				if(state == 1 || (state == 0 && turn == 1)){
@@ -377,16 +373,16 @@ public class Dungeone extends Canvas{
 							switch(map.getTile(i, j, 1).tileType){
 								case Tile.OBJECTIVE:
 									g.setColor(Color.green);
+									//System.out.println("Objective at " + i + ", " + j);
 									break;
 								case Tile.SPAWN_TILE:
 									g.setColor(Color.cyan);
 									break;
 								case Tile.DOOR_TILE:
-									if(((DoorTile) map.getTile(i, j, 1)).isOpen()){ //mark if open
-										g.setColor(Color.black);
-										g.drawLine(i*15+100, j*15+40, i*15+115, j*15+55);
-									}
-									g.setColor(new Color(100, 100, 30)); //brown
+									if(((DoorTile) map.getTile(i, j, 1)).isOpen()) //change if open
+										g.setColor(new Color(176, 128, 96)); //light brown
+									else
+										g.setColor(new Color(110, 63, 25)); //dark brown
 									break;
 								default:
 									switch(map.getTile(i, j, 0).tileType){
@@ -430,10 +426,14 @@ public class Dungeone extends Canvas{
 		g.drawString("R/P - Pass Turn", 0, 156);
 		//more controls?
 		
-		if(state != 0 && map.checkObjective())
-			g.drawString("Winner: Dungeonee!", 0, 120);
-		if(state != 0 && party.isEmpty())
-			g.drawString("Winner: Dungeoneer!", 0, 120);
+		if(state != 0 && map.checkObjective()){
+			g.drawString("Winner:", 0, 288);
+			g.drawString("Dungeonee!", 0, 300);
+		}
+		if(state != 0 && party.isEmpty()){
+			g.drawString("Winner:", 0, 288);
+			g.drawString("Dungeoneer!", 0, 300);
+		}
 		//System.out.println("finished buffer");
 	}
 }
