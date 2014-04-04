@@ -282,17 +282,11 @@ public class GameMap
 					else
 						hold=branchLocs.get(branchLocs.size()-1);
 					break;
-			case 2: if(paths.get(0)!=dir)
-					{
-						if(paths.get(1)==dir)
-							hold=pathMove(xs,ys,dir);
-						else if(paths.get(0)!=-dir)
-							hold=pathMove(xs,ys,paths.get(0));
-						else
-							hold=pathMove(xs,ys,paths.get(1));
-					}
-					else
+			case 2: if(paths.get(0)==dir || paths.get(1)==-dir)
 						hold=pathMove(xs,ys,paths.get(0));
+					else
+						hold=pathMove(xs,ys,paths.get(1));
+					break;
 		}
 		return false;
 	}
