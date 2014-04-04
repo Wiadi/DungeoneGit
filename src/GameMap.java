@@ -11,11 +11,14 @@ public class GameMap
 	private Tile[][][] tiles;
 	private int objX;
 	private int objY;
+	private int spnX;
+	private int spnY;
 	public GameMap(int width, int height)
 	{
 		tiles=new Tile[width][height][3];
-		genMap();
-		//dispMap();
+		randMap();
+//		genMap();
+//		dispMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
 				if(tiles[i][j][1].getType()==Tile.OBJECTIVE)
@@ -199,27 +202,58 @@ public class GameMap
 	{
 		int width=tiles.length;
 		int height=tiles[0].length;
-		int type=0;
-		Room[][] rooms=new Room[width/Room.WIDTH][height/Room.HEIGHT];
 		Room hold=null;
 		boolean spawnSet=false;
-		for(int xr=0;xr<rooms.length;xr++)
-			for(int yr=0;yr<rooms[0].length;yr++)
+		for(int x=0;x<width;x+=Room.WIDTH)
+			for(int y=0;y<height;y+=Room.HEIGHT)
 			{
-				if(!spawnSet)
-					if((xr==rooms.length-1 && yr==rooms[0].length-1) || (int)(Math.random()*rooms.length*rooms[0].length)==0)
-					{
-						hold=new Room(this, Room.SPAWN);
-						spawnSet=true;
-					}
+				if(!spawnSet && ((x==width-Room.WIDTH && y==height-Room.HEIGHT) || (int)(Math.random()*(width/Room.WIDTH)*(height/Room.HEIGHT))==0))
+				{
+					System.out.println(spawnSet);
+					hold=new Room(this, Room.SPAWN);
+					spawnSet=true;
+					spnX=x+(Room.WIDTH-1)/2;
+					spnY=y+(Room.HEIGHT-1)/2;
+				}
 				else
 					hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
-				if(xr>0)
-					while(!hold.checkAdj(rooms[xr-1][yr],3))
-						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
-				if(yr>0)
-					while(!hold.checkAdj(rooms[xr][yr-1],0))
-						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
+//				if(xr>0)
+//					while(!hold.checkAdj(rooms[xr-1][yr],3))
+//						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
+//				if(yr>0)
+//					while(!hold.checkAdj(rooms[xr][yr-1],0))
+//						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
+				for(int xr=0;xr<Room.WIDTH;xr++)
+					for(int yr=0;yr<Room.HEIGHT;yr++)
+						tiles[x+xr][y+yr]=hold.getLayout()[xr][yr];
+				hold=null;
+			}
+		clearDoors();
+	}
+
+	private void clearDoors()
+	{
+		int open=0;
+		for(int i=0;i<tiles.length;i++)
+			for(int j=0;j<tiles[0].length;j++)
+			{
+				if(tiles[i][j][1].getType()==4)
+				{
+					if(i>0 && tiles[i-1][j][1].getType()==0)
+						open++;
+					if(j>0 && tiles[i][j-1][1].getType()==0)
+						open++;
+					if(i<tiles.length-1 && tiles[i+1][j][1].getType()==0)
+						open++;
+					if(j<tiles[0].length-1 && tiles[i][j+1][1].getType()==0)
+						open++;
+					if(open<2)
+					{
+						tiles[i][j][1]=new WallTile(this,i,j);
+						tiles[i][j][2]=new WallTile(this,i,j);
+					}
+				}
+				open=0;
 			}
 	}
 	

@@ -17,19 +17,21 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("serial")
 public class Dungeone extends Canvas{
-	GameMap map;
-	ArrayList<Adventurer> party;
-	ArrayList<Monster> mobs;
-	int turn;	//0-Dungeonee, 1-Dungeoneer
-	int[] action;	//0-Dungeonee, 1-Dungeoneer
-	int[] select; //mobile
-	int[] pick; //fixed
-	int state; //0-setup, 1-standard, 2-switch
-	Graphics g;
-	BufferedImage buff;
-	static KeyEvent event;
+	private GameMap map;
+	private ArrayList<Adventurer> party;
+	private ArrayList<Monster> mobs;
+	private int turn;	//0-Dungeonee, 1-Dungeoneer
+	private int[] action;	//0-Dungeonee, 1-Dungeoneer
+	private int[] select; //mobile
+	private int[] pick; //fixed
+	private int state; //0-setup, 1-standard, 2-switch
+	private Graphics g;
+	private BufferedImage buff;
+	private KeyEvent event; //THIS IS BAD. GLOBAL STATIC NON-FINAL VARIABLES ARE BAD. GET RID OF IT. -A
+	private final static int WIDTH=40;
+	private final static int HEIGHT=40;
 	
-	int count;
+	private int count;
 	
 	public static void main(String[] args){
 		Frame frame = new Frame();
@@ -42,16 +44,6 @@ public class Dungeone extends Canvas{
 				System.exit(0);
 			}
 		});
-		KeyAdapter key = new KeyAdapter(){
-			@Override
-			public void keyPressed(KeyEvent e) {
-				//System.out.println(e.getKeyChar());
-				event = e;
-				//System.out.println(event.getKeyChar());
-			}
-		};
-		frame.addKeyListener(key);
-		game.addKeyListener(key);
 		frame.setVisible(true);
 		
 		game.init();
@@ -60,6 +52,15 @@ public class Dungeone extends Canvas{
 	
 	public Dungeone() {
 		super();
+		KeyAdapter key = new KeyAdapter(){
+			@Override
+			public void keyPressed(KeyEvent e) {
+				//System.out.println(e.getKeyChar());
+				event = e;
+				//System.out.println(event.getKeyChar());
+			}
+		};
+		addKeyListener(key);
 	}
 	
 	
@@ -67,13 +68,13 @@ public class Dungeone extends Canvas{
 	 * Initializes GameMap, related objects, and graphical output
 	 */
 	public void init(){
-		map = new GameMap(40,40);	//40x40 base
+		map = new GameMap(WIDTH,HEIGHT);	//40x40 base
 		party = new ArrayList<Adventurer>();
 //			party.add(new Fighter());
 //			map.placeTile(1, 1, 2, party.get(0));
 		mobs = new ArrayList<Monster>();
-		map.placeTile(2, 2, 1, new SpawnTile(map, 2, 2));
-		map.placeTile(20, 19, 1, new ObjectiveTile(map, 20, 19));
+//		map.placeTile(2, 2, 1, new SpawnTile(map, 2, 2));
+//		map.placeTile(20, 19, 1, new ObjectiveTile(map, 20, 19));
 		turn = 0;
 		action = new int[]{4, 0};
 		select = new int[]{0,0};
@@ -126,20 +127,24 @@ public class Dungeone extends Canvas{
 				switch(event.getKeyChar()){
 				//wasd to control select
 				case 'w':
-					if (select[1] > 0)
-						select[1]--;
+					select[1]--;
+					if (select[1] < 0)
+						select[1] = HEIGHT - 1;
 					break;
 				case 's':
-					if (select[1] < map.getSize()[1]-1)
-						select[1]++;
+					select[1]++;
+					if (select[1] > HEIGHT - 1)
+						select[1] = 0;
 					break;
 				case 'a':
-					if (select[0] > 0)
-						select[0]--;
+					select[0]--;
+					if (select[0] < 0)
+						select[0] = WIDTH - 1;
 					break;
 				case 'd':
-					if (select[0] < map.getSize()[0]-1)
-						select[0]++;
+					select[0]++;
+					if (select[0] > WIDTH - 1)
+						select[0] = 0;
 					break;
 				//space to pick a tile
 				case ' ':
@@ -249,20 +254,24 @@ public class Dungeone extends Canvas{
 					switch(event.getKeyCode()){
 					//arrows to also control movement
 					case KeyEvent.VK_UP:
-						if (select[1] > 0)
-							select[1]--;
+						select[1]--;
+						if (select[1] < 0)
+							select[1] = HEIGHT - 1;
 						break;
 					case KeyEvent.VK_DOWN:
-						if (select[1] < map.getSize()[1]-1)
-							select[1]++;
+						select[1]++;
+						if (select[1] > HEIGHT - 1)
+							select[1] = 0;
 						break;
 					case KeyEvent.VK_LEFT:
-						if (select[0] > 0)
-							select[0]--;
+						select[0]--;
+						if (select[0] < 0)
+							select[0] = WIDTH - 1;
 						break;
 					case KeyEvent.VK_RIGHT:
-						if (select[0] < map.getSize()[0]-1)
-							select[0]++;
+						select[0]++;
+						if (select[0] > WIDTH - 1)
+							select[0] = 0;
 						break;
 					}
 				}
@@ -316,8 +325,8 @@ public class Dungeone extends Canvas{
 		Graphics2D g = buff.createGraphics();
 		g.setBackground(Color.black);
 		g.clearRect(0, 0, getWidth(), getHeight());
-		for(int i = 0; i < 40; i += 1)
-			for(int j = 0; j < 40; j += 1){
+		for(int i = 0; i < WIDTH; i += 1)
+			for(int j = 0; j < HEIGHT; j += 1){
 				g.setColor(Color.white);
 				g.drawRect(i*15+100, j*15+40, 15, 15);
 				

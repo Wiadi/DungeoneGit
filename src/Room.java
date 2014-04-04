@@ -10,13 +10,15 @@ public class Room
 	private GameMap map;
 	public final static int WIDTH=5;
 	public final static int HEIGHT=5;
-	public final static int NUM_TYPES=5;
+	public final static int NUM_TYPES=7;
 	public final static int SPAWN=0;
 	public final static int CORRIDOR_HORIZONTAL=1;
 	public final static int CORRIDOR_VERTICAL=2;
-	public final static int WALL=3;
-	public final static int CORRIDOR_INTERSECT=4;
-	public final static int ROOM_3_SQUARE=5;
+	public final static int CORRIDOR_INTERSECT=3;
+	public final static int ROOM_3_SQUARE=4;
+	public final static int WALL=5;
+	public final static int DOUBLE_CORRIDOR_HORIZONTAL=6;
+	public final static int ROOM_5_SQUARE=7;
 	public Room(GameMap m,int t)
 	{
 		layout=new Tile[WIDTH][HEIGHT][3];
@@ -36,6 +38,10 @@ public class Room
 					   break;
 			case CORRIDOR_INTERSECT: file="cx.txt";
 									 break;
+			case DOUBLE_CORRIDOR_HORIZONTAL: file="2chor.txt";
+											 break;
+			case ROOM_5_SQUARE: file="r5sq.txt";
+								break;
 			default: file="";
 					 System.err.println("Invalid room type");
 					 break;
@@ -103,36 +109,36 @@ public class Room
 		return type;
 	}
 	
-	public boolean checkAdj(Room adj, int face)
-	{
-		switch(type)
-		{
-			case SPAWN:
-			case ROOM_3_SQUARE: int x,y;
-								if(face==0 || face==2)
-								{
-									y=(HEIGHT-1)*face/2;
-										for(x=0;x<WIDTH;x++)
-											for(int layer=0;layer<3;layer++)
-												if(adj.getLayout()[x][HEIGHT-1-y][layer].getType()==Tile.EMPTY_TILE)
-													layout[x][y][layer]=new DoorTile(map,x,y);
-								}
-								else
-								{
-									x=(WIDTH-1)*(face-1)/2;
-									for(y=0;y<HEIGHT;y++)
-										for(int layer=0;layer<3;layer++)
-											if(adj.getLayout()[WIDTH-1-x][y][layer].getType()==Tile.EMPTY_TILE)
-												layout[x][y][layer]=new DoorTile(map,x,y);
-								}
-								return true;
-			case CORRIDOR_INTERSECT: if(face==0 || face==2)
-										for(int layer=0;layer<3;layer++)
-											if(adj.getLayout()[WIDTH/2][(HEIGHT-1)*(1-face/2)][layer].getType()==Tile.EMPTY_TILE)
-												layout[WIDTH/2][(HEIGHT-1)*face/2][layer]=new DoorTile(map,WIDTH/2,(HEIGHT-1)*face/2);
-			
-		}
-		return false;
-	}
+//	public boolean checkAdj(Room adj, int face)
+//	{
+//		switch(type)
+//		{
+//			case SPAWN:
+//			case ROOM_3_SQUARE: int x,y;
+//								if(face==0 || face==2)
+//								{
+//									y=(HEIGHT-1)*face/2;
+//										for(x=0;x<WIDTH;x++)
+//											for(int layer=0;layer<3;layer++)
+//												if(adj.getLayout()[x][HEIGHT-1-y][layer].getType()==Tile.EMPTY_TILE)
+//													layout[x][y][layer]=new DoorTile(map,x,y);
+//								}
+//								else
+//								{
+//									x=(WIDTH-1)*(face-1)/2;
+//									for(y=0;y<HEIGHT;y++)
+//										for(int layer=0;layer<3;layer++)
+//											if(adj.getLayout()[WIDTH-1-x][y][layer].getType()==Tile.EMPTY_TILE)
+//												layout[x][y][layer]=new DoorTile(map,x,y);
+//								}
+//								return true;
+//			case CORRIDOR_INTERSECT: if(face==0 || face==2)
+//										for(int layer=0;layer<3;layer++)
+//											if(adj.getLayout()[WIDTH/2][(HEIGHT-1)*(1-face/2)][layer].getType()==Tile.EMPTY_TILE)
+//												layout[WIDTH/2][(HEIGHT-1)*face/2][layer]=new DoorTile(map,WIDTH/2,(HEIGHT-1)*face/2);
+//			
+//		}
+//		return false;
+//	}
 	
 }
