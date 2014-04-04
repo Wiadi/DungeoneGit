@@ -21,6 +21,24 @@ public abstract class Actor extends Tile
 		for(int i=0;i<NUM_ABILS;i++)
 			abilities[i]=false;
 	}
+	public int getBaseAtt(){
+		return baseAttack;
+	}
+	public int getCurrAtt(){
+		return currentAttack;
+	}
+	public int getAttRange(){
+		return attackRange;
+	}
+	public int getBaseHP(){
+		return baseHealth;
+	}
+	public int getCurrHP(){
+		return currentHealth;
+	}
+	public int getMoveRange(){
+		return moveRange;
+	}
 	/**
 	 * Checks whether an Actor can move to a given relative location.
 	 * @param xRel - x position of the target location relative to the Actor
@@ -53,10 +71,6 @@ public abstract class Actor extends Tile
 	public boolean hasAbility(int abilIndex)
 	{
 		return abilities[abilIndex];
-	}
-	public int getCurrAtt()
-	{
-		return currentAttack;
 	}
 	/**
 	 * Deals a given amount of damage to an Actor.

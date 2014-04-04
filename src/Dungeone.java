@@ -27,9 +27,9 @@ public class Dungeone extends Canvas{
 	private int state; //0-setup, 1-standard, 2-switch
 	private Graphics g;
 	private BufferedImage buff;
-	private KeyEvent event; //THIS IS BAD. GLOBAL STATIC NON-FINAL VARIABLES ARE BAD. GET RID OF IT. -A
-	private final static int WIDTH=40;
-	private final static int HEIGHT=40;
+	private KeyEvent event;
+	private final static int WIDTH=50;
+	private final static int HEIGHT=35;
 	
 	private int count;
 	
@@ -341,14 +341,13 @@ public class Dungeone extends Canvas{
 				
 				if(state == 0){ //spawn grants vision during setup
 					g.setColor(Color.black);
-					int x = -1, y = -1;
+					SpawnTile spawn= null;
 					for(int m = 0; m < map.getSize()[0]; m++)
 						for(int n = 0; n < map.getSize()[1]; n++)
 							if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE){
-								x = m;
-								y = n;
+								spawn = (SpawnTile) map.getTile(m, n, 1);
 							}
-					if(Math.pow(Math.abs(x-i),2)+Math.pow(Math.abs(y-j),2)<=Math.pow(4,2)){
+					if(spawn != null && spawn.canSee(i, j)){
 						if(map.getTile(i, j, 2).tileType == Tile.ADVENTURER)
 							g.setColor(Color.blue);
 						else if(map.getTile(i, j, 2).tileType == Tile.WALL_TILE)
@@ -413,6 +412,7 @@ public class Dungeone extends Canvas{
 						for(Adventurer a: party){
 							if(a.canSee(i, j))
 								g.fillRect(i*15+102, j*15+42, 10, 10);
+							//spawn vision
 						}
 					}
 					if(turn == 1)
@@ -429,11 +429,14 @@ public class Dungeone extends Canvas{
 		g.drawString("Frames: "+count, 0, 84);
 		
 		g.drawString("Controls:", 0, 108);
-		g.drawString("Z - Move P to S", 0, 120);
-		g.drawString("X - Attack S w/ P", 0, 132);
-		g.drawString("C - Create U at S", 0, 144);
-		g.drawString("R/P - Pass Turn", 0, 156);
+		g.drawString("WASD - Move S", 0, 120);
+		g.drawString("Space - Set P", 0, 132);
+		g.drawString("Z - Move P to S", 0, 144);
+		g.drawString("X - Attack S w/ P", 0, 156);
+		g.drawString("C - Create U at S", 0, 168);
+		g.drawString("R/P - Pass Turn", 0, 180);
 		//more controls?
+		
 		
 		if(state != 0 && map.checkObjective()){
 			g.drawString("Winner:", 0, 288);
@@ -443,6 +446,74 @@ public class Dungeone extends Canvas{
 			g.drawString("Winner:", 0, 288);
 			g.drawString("Dungeoneer!", 0, 300);
 		}
-		//System.out.println("finished buffer");
+		
+		boolean info = false;
+		if(turn == 0){
+			for(Adventurer a: party)
+				if(a.canSee(select[0], select[1]))
+					info = true;
+			//spawn.canSee
+		}
+		if(turn == 1)
+			info = true;
+		if(info){
+			g.drawString("Layer 0:", 900, 48);
+			switch(map.getTile(select[0], select[1], 0).getType()){
+				case Tile.FLOOR_TILE:
+					g.drawString("Floor", 900, 60);
+					g.drawString("You walk on it.", 900, 72);
+					break;
+				default:
+					g.drawString("Nothing of interest", 900, 60);
+			}
+			g.drawString("Layer 1:", 900, 108);
+			switch(map.getTile(select[0], select[1], 1).getType()){
+				case Tile.WALL_TILE:
+					g.drawString("Wall", 900, 120);
+					g.drawString("You can't walk on it.", 900, 132);
+					break;
+				case Tile.OBJECTIVE:
+					g.drawString("Objective", 900, 120);
+					g.drawString("A winrar is any adventurer here.", 800, 132);
+					break;
+				case Tile.SPAWN_TILE:
+					g.drawString("Spawn", 900, 120);
+					g.drawString("Adventurers enter here.", 900, 132);
+					break;
+				case Tile.DOOR_TILE:
+					g.drawString("Door", 900, 120);
+					g.drawString("Open: " + ((DoorTile)map.getTile(select[0], select[1], 1)).isOpen(), 900, 132);
+					g.drawString("You can sometimes walk on it.", 900, 144);
+					break;
+				default:
+					g.drawString("Nothing of interest", 900, 120);
+			}
+			Actor temp;
+			g.drawString("Layer 2:", 900, 168);
+			switch(map.getTile(select[0], select[1], 2).getType()){
+				case Tile.WALL_TILE:
+					g.drawString("Wall", 900, 180);
+					g.drawString("You can't walk on it.", 900, 192);
+					break;
+				case Tile.FIGHTER:
+					temp = ((Actor)map.getTile(select[0], select[1], 2));
+					g.drawString("Fighter", 900, 180);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
+					g.drawString("Move: " + temp.getMoveRange(), 900, 216);
+					g.drawString("Adventurer with a sword.", 900, 228);
+					break;
+				case Tile.SLIM:
+					temp = ((Actor)map.getTile(select[0], select[1], 2));
+					g.drawString("Slim", 900, 180);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
+					g.drawString("Move: " + temp.getMoveRange(), 900, 216);
+					g.drawString("Kinda shady.", 900, 228);
+					break;
+				default:
+					g.drawString("Nothing of interest", 900, 180);
+			}
+		}
 	}
 }
