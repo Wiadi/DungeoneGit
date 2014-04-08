@@ -17,8 +17,8 @@ public class GameMap
 	public GameMap(int width, int height)
 	{
 		tiles=new Tile[width][height][3];
-		randMap();
-//		genMap();
+//		randMap();
+		genMap();
 //		dispMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
@@ -294,20 +294,50 @@ public class GameMap
 	
 	public ArrayList<int[]> aStar(int xs, int ys, int xe, int ye)
 	{
-		ArrayList<int[]> closedSet=new ArrayList<int[]>();
-		ArrayList<int[]> openSet=new ArrayList<int[]>();
-		openSet.add(new int[]{xs,ys});
-		int[][] cameFrom=new int[tiles.length][tiles[0].length];
+		boolean[][] closedSet=new boolean[tiles.length][tiles[0].length];
+		boolean[][] openSet=new boolean[tiles.length][tiles[0].length];
+		openSet[xs][ys]=true;
+		String[][] cameFrom=new String[tiles.length][tiles[0].length];
 		int[][] gScore=new int[tiles.length][tiles[0].length];
 		gScore[xs][ys]=0;
 		int[][] fScore=new int[tiles.length][tiles[0].length];
 		fScore[xs][ys]=gScore[xs][ys]+Math.abs(xs-xe)+Math.abs(ys-ye);
 		int[] current=new int[2];
-		while(openSet.size()>0)
+		int x,y;
+		while(!checkEmpty(openSet))			
 		{
-			
+			for(int i=0;i<openSet.length;i++)
+				for(int j=0;j<openSet[0].length;j++)
+					;
+			if(current[0]==xe && current[1]==ye)
+				return reconstructPath(cameFrom, xe, ye);
+			for(int[] i:neighborList(current))
+			{
+				
+			}
 		}
 		return null;
+	}
+
+	public ArrayList<int[]> reconstructPath(String[][] cameFrom, int x, int y)
+	{
+		ArrayList<int[]> toReturn=new ArrayList<int[]>();
+		toReturn.add(new int[]{x,y});
+		return toReturn;
+	}
+	
+	public ArrayList<int[]> neighborList(int[] loc)
+	{
+		return null;
+	}
+	
+	public boolean checkEmpty(boolean[][] set)
+	{
+		for(int x=0;x<set.length;x++)
+			for(int y=0;y<set[0].length;y++)
+				if(set[x][y])
+					return false;
+		return true;
 	}
 	
 	public ArrayList<Integer> paths(int x,int y)
