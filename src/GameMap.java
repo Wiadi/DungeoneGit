@@ -211,13 +211,14 @@ public class GameMap
 				if(!spawnSet && ((x==width-Room.WIDTH && y==height-Room.HEIGHT) || (int)(Math.random()*(width/Room.WIDTH)*(height/Room.HEIGHT))==0))
 				{
 					System.out.println(spawnSet);
-					hold=new Room(this, Room.SPAWN);
+					hold=new Room(this, Room.SPAWN, x, y);
 					spawnSet=true;
 					spnX=x+(Room.WIDTH-1)/2;
 					spnY=y+(Room.HEIGHT-1)/2;
+					System.out.println(spnX+" "+spnY);
 				}
 				else
-					hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
+					hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1, x, y);
 //				if(xr>0)
 //					while(!hold.checkAdj(rooms[xr-1][yr],3))
 //						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
@@ -282,13 +283,31 @@ public class GameMap
 					else
 						hold=branchLocs.get(branchLocs.size()-1);
 					break;
-			case 2: if(paths.get(0)==dir || paths.get(1)==-dir)
-						hold=pathMove(xs,ys,paths.get(0));
+			case 2: if(paths.get(0)==-dir)
+						dir=paths.get(1);
 					else
-						hold=pathMove(xs,ys,paths.get(1));
+						dir=paths.get(0);
+					hold=pathMove(xs,ys,dir);
 					break;
 		}
 		return false;
+	}
+	
+	public ArrayList<int[]> aStar(int xs, int ys, int xe, int ye)
+	{
+		ArrayList<int[]> closedSet=new ArrayList<int[]>();
+		ArrayList<int[]> openSet=new ArrayList<int[]>();
+		openSet.add(new int[]{xs,ys});
+		int[][] cameFrom=new int[tiles.length][tiles[0].length];
+		int[][] gScore=new int[tiles.length][tiles[0].length];
+		gScore[xs][ys]=0;
+		int[][] fScore=new int[tiles.length][tiles[0].length];
+		fScore[xs][ys]=gScore[xs][ys]+Math.abs(xs-xe)+Math.abs(ys-ye);
+		while(openSet.size()>0)
+		{
+			
+		}
+		return null;
 	}
 	
 	public ArrayList<Integer> paths(int x,int y)

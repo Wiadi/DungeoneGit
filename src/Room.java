@@ -6,7 +6,7 @@ public class Room
 {
 	private Tile[][][] layout;
 	private String file;
-	private int type;
+	private int type, ulx, uly;
 	private GameMap map;
 	public final static int WIDTH=5;
 	public final static int HEIGHT=5;
@@ -19,10 +19,12 @@ public class Room
 	public final static int WALL=5;
 	public final static int DOUBLE_CORRIDOR_HORIZONTAL=6;
 	public final static int ROOM_5_SQUARE=7;
-	public Room(GameMap m,int t)
+	public Room(GameMap m,int t, int x, int y)
 	{
 		layout=new Tile[WIDTH][HEIGHT][3];
 		type=t;
+		ulx=x;
+		uly=y;
 		map=m;
 		switch(type)
 		{
@@ -69,25 +71,25 @@ public class Room
 					case -1:				x=-1;
 											y++;
 											break;
-					case Tile.EMPTY_TILE:	layout[x][y][layer]=new EmptyTile(map,x,y);
+					case Tile.EMPTY_TILE:	layout[x][y][layer]=new EmptyTile(map,x+ulx,y+uly);
 											break;
-					case Tile.FLOOR_TILE:	layout[x][y][layer]=new FloorTile(map,x,y);
+					case Tile.FLOOR_TILE:	layout[x][y][layer]=new FloorTile(map,x+ulx,y+uly);
 											break;
-					case Tile.WALL_TILE:	layout[x][y][layer]=new WallTile(map,x,y);
+					case Tile.WALL_TILE:	layout[x][y][layer]=new WallTile(map,x+ulx,y+uly);
 											break;
-					case Tile.OBJECTIVE: 	layout[x][y][layer]=new ObjectiveTile(map,x,y);
+					case Tile.OBJECTIVE: 	layout[x][y][layer]=new ObjectiveTile(map,x+ulx,y+uly);
 											break;
-					case Tile.DOOR_TILE:	layout[x][y][layer]=new DoorTile(map,x,y);
+					case Tile.DOOR_TILE:	layout[x][y][layer]=new DoorTile(map,x+ulx,y+uly);
 											break;
-					case Tile.SPAWN_TILE:	layout[x][y][layer]=new SpawnTile(map,x,y);
+					case Tile.SPAWN_TILE:	layout[x][y][layer]=new SpawnTile(map,x+ulx,y+uly);
 											break;
-					case Tile.FIGHTER:		layout[x][y][layer]=new Fighter(map,x,y);
+					case Tile.FIGHTER:		layout[x][y][layer]=new Fighter(map,x+ulx,y+uly);
 											break;
-					case Tile.SLIM:			layout[x][y][layer]=new Slim(map,x,y);
+					case Tile.SLIM:			layout[x][y][layer]=new Slim(map,x+ulx,y+uly);
 											break;
-					case Tile.IMP:			layout[x][y][layer]=new Imp(map,x,y);
+					case Tile.IMP:			layout[x][y][layer]=new Imp(map,x+ulx,y+uly);
 											break;
-					case Tile.KNIGHT:		layout[x][y][layer]=new Knight(map,x,y);
+					case Tile.KNIGHT:		layout[x][y][layer]=new Knight(map,x+ulx,y+uly);
 											break;
 				}
 			}
