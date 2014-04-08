@@ -10,9 +10,9 @@ public class SpawnTile extends Tile
 		tileType=SPAWN_TILE;
 	}
 	/**
-	 * Checks whether the Spawn can see a given relative location.
-	 * @param xRel - x position of the target location relative to the Spawn
-	 * @param yRel - y position of the target location relative to the Spawn
+	 * Checks whether the Spawn can see a given location.
+	 * @param x - x position of the target location in the map
+	 * @param y - y position of the target location in the map
 	 * @return true if the Spawn can see the target location, false otherwise
 	 */
 	public boolean canSee(int x, int y)

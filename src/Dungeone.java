@@ -342,10 +342,11 @@ public class Dungeone extends Canvas{
 				if(state == 0){ //spawn grants vision during setup
 					g.setColor(Color.black);
 					SpawnTile spawn= null;
-					for(int m = 0; m < map.getSize()[0]; m++)
-						for(int n = 0; n < map.getSize()[1]; n++)
+					for(int m = 0; m < WIDTH; m++)
+						for(int n = 0; n < HEIGHT; n++)
 							if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE){
 								spawn = (SpawnTile) map.getTile(m, n, 1);
+								System.out.println(m + " " + n);
 							}
 					if(spawn != null && spawn.canSee(i, j)){
 						if(map.getTile(i, j, 2).tileType == Tile.ADVENTURER)
@@ -362,11 +363,10 @@ public class Dungeone extends Canvas{
 						else
 							g.setColor(Color.black);
 						g.fillRect(i*15+102, j*15+43, 10, 10);
-						
 					}
 				}
 				
-				if(state == 1 || (state == 0 && turn == 1)){
+				if(state == 1){
 					switch(map.getTile(i, j, 2).tileType){
 						case Tile.WALL_TILE:
 							g.setColor(Color.darkGray);
@@ -409,11 +409,16 @@ public class Dungeone extends Canvas{
 //									if(map.getTile(x, y, 2).getType() < Tile.MONSTER)
 //										if(((Adventurer)(map.getTile(x, y, 2))).canSee(x-i, y-j))
 //											g.fillRect(i*40+105, j*40+45, 30, 30);
-						for(Adventurer a: party){
+						SpawnTile spawn= null;
+						for(int m = 0; m < WIDTH; m++)
+							for(int n = 0; n < HEIGHT; n++)
+								if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+									spawn = (SpawnTile) map.getTile(m, n, 1);
+						if(spawn!= null && spawn.canSee(i, j))
+							g.fillRect(i*15+102, j*15+42, 10, 10);
+						for(Adventurer a: party)
 							if(a.canSee(i, j))
 								g.fillRect(i*15+102, j*15+42, 10, 10);
-							//spawn vision
-						}
 					}
 					if(turn == 1)
 						g.fillRect(i*15+102, j*15+42, 10, 10);
@@ -449,6 +454,13 @@ public class Dungeone extends Canvas{
 		
 		boolean info = false;
 		if(turn == 0){
+			SpawnTile spawn= null;
+			for(int m = 0; m < WIDTH; m++)
+				for(int n = 0; n < HEIGHT; n++)
+					if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+						spawn = (SpawnTile) map.getTile(m, n, 1);
+			if(spawn != null && spawn.canSee(select[0], select[1]))
+				info = true;
 			for(Adventurer a: party)
 				if(a.canSee(select[0], select[1]))
 					info = true;
