@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 /**
  * Maintains a GameMap and associated Actors
  * Interprets user input to provide game control
+ * Controls output display
  * @author Jacob Ryder
  */
 @SuppressWarnings("serial")
@@ -28,6 +31,7 @@ public class Dungeone extends Canvas{
 	private Graphics g;
 	private BufferedImage buff;
 	private KeyEvent event;
+	private MouseEvent e;
 	private final static int WIDTH=50;
 	private final static int HEIGHT=35;
 	
@@ -55,12 +59,14 @@ public class Dungeone extends Canvas{
 		KeyAdapter key = new KeyAdapter(){
 			@Override
 			public void keyPressed(KeyEvent e) {
-				//System.out.println(e.getKeyChar());
 				event = e;
-				//System.out.println(event.getKeyChar());
 			}
 		};
+		MouseAdapter mouse = new MouseAdapter(){
+			//implement methods
+		};
 		addKeyListener(key);
+		addMouseListener(mouse);
 	}
 	
 	
@@ -68,10 +74,8 @@ public class Dungeone extends Canvas{
 	 * Initializes GameMap, related objects, and graphical output
 	 */
 	public void init(){
-		map = new GameMap(WIDTH,HEIGHT);	//40x40 base
+		map = new GameMap(WIDTH,HEIGHT);	//50x35 for aesthetics
 		party = new ArrayList<Adventurer>();
-//			party.add(new Fighter());
-//			map.placeTile(1, 1, 2, party.get(0));
 		mobs = new ArrayList<Monster>();
 //		map.placeTile(2, 2, 1, new SpawnTile(map, 2, 2));
 //		map.placeTile(20, 19, 1, new ObjectiveTile(map, 20, 19));
@@ -83,7 +87,7 @@ public class Dungeone extends Canvas{
 		count = 0;
 		
 		g = this.getGraphics();
-		event = null; //needed?
+		event = null;
 		buff = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 	}
 
@@ -109,18 +113,13 @@ public class Dungeone extends Canvas{
 		action[turn] += 5;
 		if (action[turn] > 20)
 			action[turn] = 20;
-		//System.out.println("1");
 		update();
-		//System.out.println("2");
 		
 		boolean cont = true;
 		while(cont){ //pass conditions, end conditions
 			try {Thread.sleep(1l);} 
 			catch (InterruptedException e) {}
-			//System.out.println("3"); //logic error here
-			//update();
 			if(event != null){
-				//System.out.println(event.getKeyChar());
 				if (state == 2)
 					state = 1;
 				else if (state != 2){
@@ -234,6 +233,13 @@ public class Dungeone extends Canvas{
 								for(Adventurer a: party)
 									if(a.canSee(select[0], select[1]))
 										hidden = false;
+								SpawnTile spawn= null;
+								for(int m = 0; m < WIDTH; m++)
+									for(int n = 0; n < HEIGHT; n++)
+										if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+											spawn = (SpawnTile) map.getTile(m, n, 1);
+								if(spawn.canSee(select[0], select[1]))
+									hidden = false;
 								if(hidden){
 									Slim slim = new Slim(map, select[0], select[1]);
 									mobs.add(slim);
@@ -277,7 +283,6 @@ public class Dungeone extends Canvas{
 				}
 				}
 				event = null;
-				//System.out.println("nullified");
 				
 				if(action[turn] <=0)
 					cont = false;
@@ -286,8 +291,6 @@ public class Dungeone extends Canvas{
 				}
 				update();
 			} //if(event
-			//update();
-			//System.out.println(cont);
 		}//while(cont
 		
 		if(state == 0 || state == 1)
@@ -325,7 +328,9 @@ public class Dungeone extends Canvas{
 		Graphics2D g = buff.createGraphics();
 		g.setBackground(Color.black);
 		g.clearRect(0, 0, getWidth(), getHeight());
-		for(int i = 0; i < WIDTH; i += 1)
+		
+		//Map and Vision
+		for(int i = 0; i < WIDTH; i += 1){
 			for(int j = 0; j < HEIGHT; j += 1){
 				g.setColor(Color.white);
 				g.drawRect(i*15+100, j*15+40, 15, 15);
@@ -364,7 +369,7 @@ public class Dungeone extends Canvas{
 					}
 				}
 				
-				if(state == 1){
+				if(state == 1){ //dungeonee sees by units and spawn, dungeoneer sees all
 					switch(map.getTile(i, j, 2).tileType){
 						case Tile.WALL_TILE:
 							g.setColor(Color.darkGray);
@@ -422,6 +427,9 @@ public class Dungeone extends Canvas{
 						g.fillRect(i*15+102, j*15+42, 10, 10);
 				}
 			}
+		}
+		
+		//Stats 
 		g.setColor(Color.white);
 		g.drawString("Stats:", 0, 12);
 		g.drawString("Turn: "+turn, 0, 24);
@@ -431,6 +439,7 @@ public class Dungeone extends Canvas{
 		g.drawString("State: " +state, 0, 72);
 		g.drawString("Frames: "+count, 0, 84);
 		
+		//Controls
 		g.drawString("Controls:", 0, 108);
 		g.drawString("WASD - Move S", 0, 120);
 		g.drawString("Space - Set P", 0, 132);
@@ -440,7 +449,7 @@ public class Dungeone extends Canvas{
 		g.drawString("R/P - Pass Turn", 0, 180);
 		//more controls?
 		
-		
+		//End Conditions
 		if(state != 0 && map.checkObjective()){
 			g.drawString("Winner:", 0, 288);
 			g.drawString("Dungeonee!", 0, 300);
@@ -450,6 +459,8 @@ public class Dungeone extends Canvas{
 			g.drawString("Dungeoneer!", 0, 300);
 		}
 		
+		//Tile Info
+		if(state == 0 || state == 1){
 		boolean info = false;
 		if(turn == 0){
 			SpawnTile spawn= null;
@@ -523,6 +534,7 @@ public class Dungeone extends Canvas{
 					break;
 				default:
 					g.drawString("Nothing of interest", 900, 180);
+			}
 			}
 		}
 	}
