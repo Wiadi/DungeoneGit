@@ -344,10 +344,8 @@ public class Dungeone extends Canvas{
 					SpawnTile spawn= null;
 					for(int m = 0; m < WIDTH; m++)
 						for(int n = 0; n < HEIGHT; n++)
-							if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE){
+							if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
 								spawn = (SpawnTile) map.getTile(m, n, 1);
-								System.out.println(m + " " + n);
-							}
 					if(spawn != null && spawn.canSee(i, j)){
 						if(map.getTile(i, j, 2).tileType == Tile.ADVENTURER)
 							g.setColor(Color.blue);

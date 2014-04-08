@@ -54,4 +54,14 @@ public abstract class Tile
 		yPos=y;
 		return this;
 	}
+	/**
+	 * Checks whether a Tile can see a given location.
+	 * @param x - x position of the target location
+	 * @param y - y position of the target location
+	 * @return true if the Tile can see the target location, false otherwise
+	 */
+	public boolean canSee(int x, int y)
+	{
+		return false;
+	}
 }

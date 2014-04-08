@@ -215,7 +215,6 @@ public class GameMap
 					spawnSet=true;
 					spnX=x+(Room.WIDTH-1)/2;
 					spnY=y+(Room.HEIGHT-1)/2;
-					System.out.println(spnX+" "+spnY);
 				}
 				else
 					hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1, x, y);
@@ -303,6 +302,7 @@ public class GameMap
 		gScore[xs][ys]=0;
 		int[][] fScore=new int[tiles.length][tiles[0].length];
 		fScore[xs][ys]=gScore[xs][ys]+Math.abs(xs-xe)+Math.abs(ys-ye);
+		int[] current=new int[2];
 		while(openSet.size()>0)
 		{
 			
