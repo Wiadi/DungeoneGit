@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -31,7 +32,7 @@ public class Dungeone extends Canvas{
 	private Graphics g;
 	private BufferedImage buff;
 	private KeyEvent event;
-	private MouseEvent e;
+	private MouseEvent event2;
 	private final static int WIDTH=50;
 	private final static int HEIGHT=35;
 	
@@ -63,7 +64,10 @@ public class Dungeone extends Canvas{
 			}
 		};
 		MouseAdapter mouse = new MouseAdapter(){
-			//implement methods
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				event2 = e;
+			}
 		};
 		addKeyListener(key);
 		addMouseListener(mouse);
@@ -88,6 +92,7 @@ public class Dungeone extends Canvas{
 		
 		g = this.getGraphics();
 		event = null;
+		event2 = null;
 		buff = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 	}
 
@@ -119,10 +124,11 @@ public class Dungeone extends Canvas{
 		while(cont){ //pass conditions, end conditions
 			try {Thread.sleep(1l);} 
 			catch (InterruptedException e) {}
-			if(event != null){
+			if(event != null || event2 != null){
 				if (state == 2)
 					state = 1;
 				else if (state != 2){
+				if(event!= null){
 				switch(event.getKeyChar()){
 				//wasd to control select
 				case 'w':
@@ -280,9 +286,14 @@ public class Dungeone extends Canvas{
 							select[0] = 0;
 						break;
 					}
+				} //switch(event
+				} //if event != null
+				else if(event2 != null){
+					//do things based on keyEvent
 				}
-				}
+				} //if state!= 2
 				event = null;
+				
 				
 				if(action[turn] <=0)
 					cont = false;
