@@ -164,6 +164,7 @@ public class Dungeone extends Canvas{
 					break;
 				//z to move from pick to select
 				case 'z':	//potentially inefficient
+					if(select[0] != -1 && select[1] != -1){
 					if(pick[0] != -1 && pick[1] != -1){
 						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER) //200 mob
 						if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE) //get doors out of 2
@@ -178,9 +179,11 @@ public class Dungeone extends Canvas{
 							}
 						}
 					}
+					}
 					break;
 				//x to have pick attack select 
 				case 'x': //potentially inefficient
+					if(select[0] != -1 && select[1] != -1){
 					if(pick[0] != -1 && pick[1] != -1){
 						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER){
 							if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
@@ -209,11 +212,13 @@ public class Dungeone extends Canvas{
 							}
 						}
 					}
+					}
 					break;
 				//c to place a unit	on select
 				case 'c':
 					if(turn == 0){
-						if(state == 0){ 
+						if(state == 0){
+							if(select[0] != -1 && select[1] != -1){
 							if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
 								int x = -1, y = -1;
 								for(int i = 0; i < map.getSize()[0]; i++)
@@ -225,11 +230,12 @@ public class Dungeone extends Canvas{
 								if(Math.abs(select[0] - x) <= 1 && Math.abs(select[1] - y) <= 1){
 									Fighter swrd = new Fighter(map, select[0], select[1]);
 									party.add(swrd);
-									System.out.println(select[0]+" "+select[1]);
+									//System.out.println(select[0]+" "+select[1]);
 									map.placeTile(select[0], select[1], 2, swrd);
 									action[turn]-=3;
 								}
 							}
+						}
 						}
 					}
 					if(turn == 1){ //needs to be able to switch mob type
@@ -290,9 +296,43 @@ public class Dungeone extends Canvas{
 				} //if event != null
 				else if(event2 != null){
 					//do things based on keyEvent
-				}
-				} //if state!= 2
+					int x = event2.getX();
+					int y = event2.getY();
+					if((x > 100 && x < 100 + 15*WIDTH) && (y > 40 && y < 40 + 15*HEIGHT)){
+						x = (x - 100)/15;
+						y = (y - 40)/15;
+						select[0] = x;
+						select[1] = y;
+						if(event2.getButton() == MouseEvent.BUTTON1){
+							if(pick[0] == x && pick[1] == y){
+								System.out.println("Create");
+							}
+							else{
+								pick[0] = x;
+								pick[1] = y;
+							}
+						} //if(m1
+						if(event2.getButton() == MouseEvent.BUTTON3){ //right click is m3
+							select[0] = x;
+							select[1] = y;
+							//pretests?
+							if(map.getTile(select[0], select[1], 2).getType() < Tile.ADVENTURER){
+								if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || ((DoorTile) map.getTile(select[0], select[1], 2)).isOpen())
+								System.out.println("Move");
+							}
+							if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
+								System.out.println("Attack");
+							}
+							if(map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE){
+								System.out.println("Door");
+							}
+						}//if(m3
+					}//if(in map
+					//System.out.println(x + ", " + y + ": " + event2.getButton());
+				} //if(event2!=null
+				} //if(state!= 2
 				event = null;
+				event2 = null;
 				
 				
 				if(action[turn] <=0)
@@ -301,7 +341,7 @@ public class Dungeone extends Canvas{
 					cont = false;
 				}
 				update();
-			} //if(event
+			} //if(event||event2 != null
 		}//while(cont
 		
 		if(state == 0 || state == 1)
@@ -311,6 +351,16 @@ public class Dungeone extends Canvas{
 		turn = (turn+1)%2;
 		update();
 	}
+	
+	/**
+	 * Attempts to move an actor from the picked tile to the selected tile
+	 * @return boolean - whether the move was successful
+	 */
+	public boolean move(){
+		//fill later
+		return false;
+	}
+	
 	
 	/**
 	 * Displays buffered image
@@ -488,9 +538,9 @@ public class Dungeone extends Canvas{
 		}
 		if(turn == 1)
 			info = true;
-		if(info){
+		if(info && pick[0] != -1 && pick[1] != -1){
 			g.drawString("Layer 0:", 900, 48);
-			switch(map.getTile(select[0], select[1], 0).getType()){
+			switch(map.getTile(pick[0], pick[1], 0).getType()){
 				case Tile.FLOOR_TILE:
 					g.drawString("Floor", 900, 60);
 					g.drawString("You walk on it.", 900, 72);
@@ -499,7 +549,7 @@ public class Dungeone extends Canvas{
 					g.drawString("Nothing of interest", 900, 60);
 			}
 			g.drawString("Layer 1:", 900, 108);
-			switch(map.getTile(select[0], select[1], 1).getType()){
+			switch(map.getTile(pick[0], pick[1], 1).getType()){
 				case Tile.WALL_TILE:
 					g.drawString("Wall", 900, 120);
 					g.drawString("You can't walk on it.", 900, 132);
@@ -514,7 +564,7 @@ public class Dungeone extends Canvas{
 					break;
 				case Tile.DOOR_TILE:
 					g.drawString("Door", 900, 120);
-					g.drawString("Open: " + ((DoorTile)map.getTile(select[0], select[1], 1)).isOpen(), 900, 132);
+					g.drawString("Open: " + ((DoorTile)map.getTile(pick[0], pick[1], 1)).isOpen(), 900, 132);
 					g.drawString("You can sometimes walk on it.", 900, 144);
 					break;
 				default:
@@ -522,13 +572,13 @@ public class Dungeone extends Canvas{
 			}
 			Actor temp;
 			g.drawString("Layer 2:", 900, 168);
-			switch(map.getTile(select[0], select[1], 2).getType()){
+			switch(map.getTile(pick[0], pick[1], 2).getType()){
 				case Tile.WALL_TILE:
 					g.drawString("Wall", 900, 180);
 					g.drawString("You can't walk on it.", 900, 192);
 					break;
 				case Tile.FIGHTER:
-					temp = ((Actor)map.getTile(select[0], select[1], 2));
+					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
 					g.drawString("Fighter", 900, 180);
 					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
 					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
