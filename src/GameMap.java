@@ -269,35 +269,6 @@ public class GameMap
 		return new int[]{tiles.length,tiles[0].length};
 	}
 	
-	public boolean hasPath(int xs, int ys, int xe, int ye)
-	{
-		int[] hold;
-		int[][] branches=new int[tiles.length][tiles[0].length];
-		ArrayList<int[]> branchLocs=new ArrayList<int[]>();
-		for(int i=0;i<branches.length;i++)
-			for(int j=0;j<branches[0].length;j++)
-				branches[i][j]=0;
-		ArrayList<Integer> paths=paths(xs,ys);
-		int dir=paths.get(0);
-		branches[xs][ys]=1;
-		branchLocs.add(new int[]{xs,ys});
-		switch(paths.size())
-		{
-			case 1: if(paths.get(0)==dir)
-						hold=pathMove(xs,ys,dir);
-					else
-						hold=branchLocs.get(branchLocs.size()-1);
-					break;
-			case 2: if(paths.get(0)==-dir)
-						dir=paths.get(1);
-					else
-						dir=paths.get(0);
-					hold=pathMove(xs,ys,dir);
-					break;
-		}
-		return false;
-	}
-	
 	public ArrayList<int[]> aStar(int xs, int ys, int xe, int ye)
 	{
 		boolean[][] closedSet=new boolean[tiles.length][tiles[0].length];
@@ -340,7 +311,7 @@ public class GameMap
 		return null;
 	}
 
-	public ArrayList<int[]> reconstructPath(String[][] cameFrom, int[] loc)
+	private ArrayList<int[]> reconstructPath(String[][] cameFrom, int[] loc)
 	{
 		ArrayList<int[]> path=new ArrayList<int[]>();
 		if(cameFrom[loc[0]][loc[1]]!=null)
@@ -349,12 +320,12 @@ public class GameMap
 		return path;
 	}
 	
-	public int[] parseLoc(String loc)
+	private int[] parseLoc(String loc)
 	{
 		return new int[]{Integer.parseInt(loc.substring(0,1)),Integer.parseInt(loc.substring(3,4))};
 	}
 	
-	public ArrayList<int[]> neighborList(int[] loc)
+	private ArrayList<int[]> neighborList(int[] loc)
 	{
 		ArrayList<int[]> neighbors=new ArrayList<int[]>();
 		int x=loc[0], y=loc[1];
@@ -377,63 +348,12 @@ public class GameMap
 		return neighbors;
 	}
 	
-	public boolean checkEmpty(boolean[][] set)
+	private boolean checkEmpty(boolean[][] set)
 	{
 		for(int x=0;x<set.length;x++)
 			for(int y=0;y<set[0].length;y++)
 				if(set[x][y])
 					return false;
 		return true;
-	}
-	
-	public ArrayList<Integer> paths(int x,int y)
-	{
-		ArrayList<Integer> hold=new ArrayList<Integer>();
-		{
-			if(y>0 && (tiles[x][y-1][2].getType()==0 || tiles[x][y-1][2].getType()==4))
-				hold.add(1);
-			if(x<tiles.length-1 && y>0 && (tiles[x+1][y-1][2].getType()==0 || tiles[x+1][y-1][2].getType()==4))
-				hold.add(2);
-			if(x<tiles.length-1 && (tiles[x+1][y][2].getType()==0 || tiles[x+1][y][2].getType()==4))
-				hold.add(3);
-			if(x<tiles.length-1 && y<tiles[0].length-1 && (tiles[x+1][y+1][2].getType()==0 || tiles[x+1][y+1][2].getType()==4))
-				hold.add(4);
-			if(y<tiles[0].length-1 && (tiles[x][y+1][2].getType()==0 || tiles[x][y+1][2].getType()==4))
-				hold.add(-1);
-			if(x>0 && y<tiles[0].length-1 && (tiles[x-1][y+1][2].getType()==0 || tiles[x-1][y+1][2].getType()==4))
-				hold.add(-2);
-			if(x>0 && (tiles[x-1][y][2].getType()==0 || tiles[x-1][y][2].getType()==4))
-				hold.add(-3);
-			if(x>0 && y>0 && (tiles[x-1][y-1][2].getType()==0 || tiles[x-1][y-1][2].getType()==4))
-				hold.add(-4);
-		}
-		return hold;
-	}
-	
-	public int[] pathMove(int x, int y, int dir)
-	{
-		int xe=x;
-		int ye=y;
-		switch(dir)
-		{
-			case 2: xe++;
-			case 1: ye--;
-					break;
-			case 4: ye++;
-			case 3: xe++;
-					break;
-			case -2: xe--;
-			case -1: ye++;
-					 break;
-			case -4: ye--;
-			case -3: xe--;
-					 break;
-		}
-		if(tiles[xe][ye][2].getType()==0)
-		{
-			x=xe;
-			y=ye;
-		}
-		return new int[]{x,y};
 	}
 }
