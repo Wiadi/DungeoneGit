@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Scanner;
 /**
  * Stores all map data for the current floor in three two-dimensional grids and modifies
@@ -308,7 +309,7 @@ public class GameMap
 		int[][] fScore=new int[tiles.length][tiles[0].length];
 		fScore[xs][ys]=gScore[xs][ys]+Math.abs(xs-xe)+Math.abs(ys-ye);
 		int[] current=new int[2];
-		int x,y;
+		int tentativeGScore;
 		while(!checkEmpty(openSet))			
 		{
 			for(int i=0;i<openSet.length;i++)
@@ -319,26 +320,61 @@ public class GameMap
 						current[1]=j;
 					}
 			if(current[0]==xe && current[1]==ye)
-				return reconstructPath(cameFrom, xe, ye);
+				return reconstructPath(cameFrom, new int[]{xe,ye});
 			openSet[current[0]][current[1]]=false;
+			closedSet[current[0]][current[1]]=true;
 			for(int[] i:neighborList(current))
 			{
-				
+				if(closedSet[i[0]][i[1]])
+					continue;
+				tentativeGScore=gScore[current[0]][current[1]]+1;
+				if(!openSet[i[0]][i[1]] || tentativeGScore<gScore[i[0]][i[1]])
+				{
+					cameFrom[i[0]][i[1]]=current[0]+", "+current[1];
+					gScore[i[0]][i[1]]=tentativeGScore;
+					fScore[i[0]][i[1]]=gScore[i[0]][i[1]]+Math.abs(i[0]-xe)+Math.abs(i[1]-ye);
+					openSet[i[0]][i[1]]=true;
+				}
 			}
 		}
 		return null;
 	}
 
-	public ArrayList<int[]> reconstructPath(String[][] cameFrom, int x, int y)
+	public ArrayList<int[]> reconstructPath(String[][] cameFrom, int[] loc)
 	{
-		ArrayList<int[]> toReturn=new ArrayList<int[]>();
-		toReturn.add(new int[]{x,y});
-		return toReturn;
+		ArrayList<int[]> path=new ArrayList<int[]>();
+		if(cameFrom[loc[0]][loc[1]]!=null)
+			path=reconstructPath(cameFrom, parseLoc(cameFrom[loc[0]][loc[1]]));
+		path.add(loc);
+		return path;
+	}
+	
+	public int[] parseLoc(String loc)
+	{
+		return new int[]{Integer.parseInt(loc.substring(0,1)),Integer.parseInt(loc.substring(3,4))};
 	}
 	
 	public ArrayList<int[]> neighborList(int[] loc)
 	{
-		return null;
+		ArrayList<int[]> neighbors=new ArrayList<int[]>();
+		int x=loc[0], y=loc[1];
+		if(y>0 && (tiles[x][y-1][2].getType()==Tile.EMPTY_TILE || (tiles[x][y-1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x][y-1][1])).isOpen())))
+			neighbors.add(new int[]{x,y-1});
+		if(x<tiles.length-1 && y>0 && (tiles[x+1][y-1][2].getType()==Tile.EMPTY_TILE || (tiles[x+1][y-1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x+1][y-1][1])).isOpen())))
+			neighbors.add(new int[]{x+1,y-1});
+		if(x<tiles.length-1 && (tiles[x+1][y][2].getType()==Tile.EMPTY_TILE || (tiles[x+1][y][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x+1][y][1])).isOpen())))
+			neighbors.add(new int[]{x+1,y});
+		if(x<tiles.length-1 && y<tiles[0].length-1 && (tiles[x+1][y+1][2].getType()==Tile.EMPTY_TILE || (tiles[x+1][y+1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x+1][y+1][1])).isOpen())))
+			neighbors.add(new int[]{x+1,y+1});
+		if(y<tiles[0].length-1 && (tiles[x][y+1][2].getType()==Tile.EMPTY_TILE || (tiles[x][y+1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x][y+1][1])).isOpen())))
+			neighbors.add(new int[]{x,y+1});
+		if(x>0 && y<tiles[0].length-1 && (tiles[x-1][y+1][2].getType()==Tile.EMPTY_TILE || (tiles[x-1][y+1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x-1][y+1][1])).isOpen())))
+			neighbors.add(new int[]{x-1,y+1});
+		if(x>0 && (tiles[x-1][y][2].getType()==Tile.EMPTY_TILE || (tiles[x-1][y][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x-1][y][1])).isOpen())))
+			neighbors.add(new int[]{x-1,y});
+		if(x>0 && y>0 && (tiles[x-1][y-1][2].getType()==Tile.EMPTY_TILE || (tiles[x-1][y-1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x-1][y-1][1])).isOpen())))
+			neighbors.add(new int[]{x-1,y-1});
+		return neighbors;
 	}
 	
 	public boolean checkEmpty(boolean[][] set)
