@@ -16,10 +16,6 @@ public class GameMap
 	private int spnY;
 	public GameMap(int width, int height)
 	{
-		objX=-1;
-		objY=-1;
-		spnX=-1;
-		spnY=-1;
 		tiles=new Tile[width][height][3];
 		randMap();
 //		genMap();
