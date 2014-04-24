@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -31,7 +32,7 @@ public class Dungeone extends Canvas{
 	private Graphics g;
 	private BufferedImage buff;
 	private KeyEvent event;
-	private MouseEvent e;
+	private MouseEvent event2;
 	private final static int WIDTH=50;
 	private final static int HEIGHT=35;
 	
@@ -63,7 +64,10 @@ public class Dungeone extends Canvas{
 			}
 		};
 		MouseAdapter mouse = new MouseAdapter(){
-			//implement methods
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				event2 = e;
+			}
 		};
 		addKeyListener(key);
 		addMouseListener(mouse);
@@ -88,6 +92,7 @@ public class Dungeone extends Canvas{
 		
 		g = this.getGraphics();
 		event = null;
+		event2 = null;
 		buff = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
 	}
 
@@ -119,10 +124,11 @@ public class Dungeone extends Canvas{
 		while(cont){ //pass conditions, end conditions
 			try {Thread.sleep(1l);} 
 			catch (InterruptedException e) {}
-			if(event != null){
+			if(event != null || event2 != null){
 				if (state == 2)
 					state = 1;
 				else if (state != 2){
+				if(event!= null){
 				switch(event.getKeyChar()){
 				//wasd to control select
 				case 'w':
@@ -158,97 +164,106 @@ public class Dungeone extends Canvas{
 					break;
 				//z to move from pick to select
 				case 'z':	//potentially inefficient
-					if(pick[0] != -1 && pick[1] != -1){
-						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER) //200 mob
-						if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE) //get doors out of 2
-						if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || (map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE && ((DoorTile) map.getTile(select[0], select[1], 1)).isOpen())){
-							Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
-							if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
-							if(picked.canMoveTo(select[0], select[1])){ //now absolute
-								map.move(pick[0], pick[1], select[0], select[1], 2);
-								pick[0] = select[0];
-								pick[1] = select[1];
-								action[turn]--;
-							}
-						}
-					}
+					move();
+//					if(select[0] != -1 && select[1] != -1){
+//					if(pick[0] != -1 && pick[1] != -1){
+//						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER) //200 mob
+//						if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE) //get doors out of 2
+//						if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || (map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE && ((DoorTile) map.getTile(select[0], select[1], 1)).isOpen())){
+//							Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+//							if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+//							if(picked.canMoveTo(select[0], select[1])){ //now absolute
+//								map.move(pick[0], pick[1], select[0], select[1], 2);
+//								pick[0] = select[0];
+//								pick[1] = select[1];
+//								action[turn]--;
+//							}
+//						}
+//					}
+//					}
 					break;
 				//x to have pick attack select 
 				case 'x': //potentially inefficient
-					if(pick[0] != -1 && pick[1] != -1){
-						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER){
-							if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
-								Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
-								Actor selected = (Actor) map.getTile(select[0], select[1], 2);
-								if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
-									if(picked.canAttack(select[0], select[1])){ //now absolute
-										if(map.attack(pick[0], pick[1], select[0], select[1], 2)) //tests if dead after
-											if(selected.getType() >= Tile.MONSTER)
-												mobs.remove(selected);
-											else
-												party.remove(selected);
-										action[turn]--;
-									}
-							}
-							else if(map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE){
-								Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
-								DoorTile selected = (DoorTile) map.getTile(select[0], select[1], 1);
-								//DoorTile selected2 = (DoorTile) map.getTile(select[0], select[1], 2);
-								if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
-									if(picked.canAttack(select[0], select[1])){
-										selected.toggleOpen();
-										//selected2.toggleOpen();
-										action[turn]--;
-									}
-							}
-						}
-					}
+					attack();
+//					if(select[0] != -1 && select[1] != -1){
+//					if(pick[0] != -1 && pick[1] != -1){
+//						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER){
+//							if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
+//								Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+//								Actor selected = (Actor) map.getTile(select[0], select[1], 2);
+//								if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+//									if(picked.canAttack(select[0], select[1])){ //now absolute
+//										if(map.attack(pick[0], pick[1], select[0], select[1], 2)) //tests if dead after
+//											if(selected.getType() >= Tile.MONSTER)
+//												mobs.remove(selected);
+//											else
+//												party.remove(selected);
+//										action[turn]--;
+//									}
+//							}
+//							else if(map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE){
+//								Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+//								DoorTile selected = (DoorTile) map.getTile(select[0], select[1], 1);
+//								//DoorTile selected2 = (DoorTile) map.getTile(select[0], select[1], 2);
+//								if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+//									if(picked.canAttack(select[0], select[1])){
+//										selected.toggleOpen();
+//										//selected2.toggleOpen();
+//										action[turn]--;
+//									}
+//							}
+//						}
+//					}
+//					}
 					break;
 				//c to place a unit	on select
 				case 'c':
-					if(turn == 0){
-						if(state == 0){ 
-							if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
-								int x = -1, y = -1;
-								for(int i = 0; i < map.getSize()[0]; i++)
-									for(int j = 0; j < map.getSize()[1]; j++)
-										if(map.getTile(i, j, 1).tileType == Tile.SPAWN_TILE){
-											x = i;
-											y = j;
-										}
-								if(Math.abs(select[0] - x) <= 1 && Math.abs(select[1] - y) <= 1){
-									Fighter swrd = new Fighter(map, select[0], select[1]);
-									party.add(swrd);
-									System.out.println(select[0]+" "+select[1]);
-									map.placeTile(select[0], select[1], 2, swrd);
-									action[turn]-=3;
-								}
-							}
-						}
-					}
-					if(turn == 1){ //needs to be able to switch mob type
-						if(!(select[0] == -1 && select[1] == -1)){
-							if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
-								boolean hidden = true;
-								for(Adventurer a: party)
-									if(a.canSee(select[0], select[1]))
-										hidden = false;
-								SpawnTile spawn= null;
-								for(int m = 0; m < WIDTH; m++)
-									for(int n = 0; n < HEIGHT; n++)
-										if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
-											spawn = (SpawnTile) map.getTile(m, n, 1);
-								if(spawn.canSee(select[0], select[1]))
-									hidden = false;
-								if(hidden){
-									Slim slim = new Slim(map, select[0], select[1]);
-									mobs.add(slim);
-									map.placeTile(select[0], select[1], 2, slim);
-									action[turn]-=5;
-								}
-							}
-						}
-					}
+					create();
+//					if(turn == 0){
+//						if(state == 0){
+//							if(select[0] != -1 && select[1] != -1){
+//							if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
+//								int x = -1, y = -1;
+//								for(int i = 0; i < map.getSize()[0]; i++)
+//									for(int j = 0; j < map.getSize()[1]; j++)
+//										if(map.getTile(i, j, 1).tileType == Tile.SPAWN_TILE){
+//											x = i;
+//											y = j;
+//										}
+//								if(Math.abs(select[0] - x) <= 1 && Math.abs(select[1] - y) <= 1){
+//									Fighter swrd = new Fighter(map, select[0], select[1]);
+//									party.add(swrd);
+//									//System.out.println(select[0]+" "+select[1]);
+//									map.placeTile(select[0], select[1], 2, swrd);
+//									action[turn]-=3;
+//								}
+//							}
+//						}
+//						}
+//					}
+//					if(turn == 1){ //needs to be able to switch mob type
+//						if(!(select[0] == -1 && select[1] == -1)){
+//							if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
+//								boolean hidden = true;
+//								for(Adventurer a: party)
+//									if(a.canSee(select[0], select[1]))
+//										hidden = false;
+//								SpawnTile spawn= null;
+//								for(int m = 0; m < WIDTH; m++)
+//									for(int n = 0; n < HEIGHT; n++)
+//										if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+//											spawn = (SpawnTile) map.getTile(m, n, 1);
+//								if(spawn.canSee(select[0], select[1]))
+//									hidden = false;
+//								if(hidden){
+//									Slim slim = new Slim(map, select[0], select[1]);
+//									mobs.add(slim);
+//									map.placeTile(select[0], select[1], 2, slim);
+//									action[turn]-=5;
+//								}
+//							}
+//						}
+//					}
 					break;
 				//r or p to pass turn	
 				case 'r':
@@ -280,9 +295,59 @@ public class Dungeone extends Canvas{
 							select[0] = 0;
 						break;
 					}
-				}
-				}
+				} //switch(event
+				} //if event != null
+				else if(event2 != null){
+					//do things based on keyEvent
+					int x = event2.getX();
+					int y = event2.getY();
+					if((x > 100 && x < 100 + 15*WIDTH) && (y > 40 && y < 40 + 15*HEIGHT)){
+						x = (x - 100)/15;
+						y = (y - 40)/15;
+						select[0] = x;
+						select[1] = y;
+						if(event2.getButton() == MouseEvent.BUTTON1){
+							if(pick[0] == x && pick[1] == y){
+								System.out.println("Create");
+								create();
+							}
+							else{
+								pick[0] = x;
+								pick[1] = y;
+							}
+						} //if(m1
+						if(event2.getButton() == MouseEvent.BUTTON3){ //right click is m3
+							select[0] = x;
+							select[1] = y;
+							//pretests?
+							if(map.getTile(select[0], select[1], 2).getType() < Tile.ADVENTURER){
+								if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || ((DoorTile) map.getTile(select[0], select[1], 1)).isOpen()){
+									System.out.println("Move");
+									move();
+								}
+								else{
+									System.out.println("Door");
+									attack();
+								}
+							}
+							else if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
+								System.out.println("Attack");
+								attack();
+							}
+						}//if(m3
+						if(event2.getButton() == MouseEvent.BUTTON2){ //middle is m2
+							if(state == 0 || state == 1) //maybe change
+								cont = false;
+						} //m2
+					}//if(in map
+					System.out.println("s: " + select[0] + ", " + select[1]);
+					System.out.println("p: " + pick[0] + ", " + pick[1]);
+					System.out.println(event2.getButton());
+				} //if(event2!=null
+				} //if(state!= 2
 				event = null;
+				event2 = null;
+				
 				
 				if(action[turn] <=0)
 					cont = false;
@@ -290,7 +355,7 @@ public class Dungeone extends Canvas{
 					cont = false;
 				}
 				update();
-			} //if(event
+			} //if(event||event2 != null
 		}//while(cont
 		
 		if(state == 0 || state == 1)
@@ -299,6 +364,117 @@ public class Dungeone extends Canvas{
 			state = 1;
 		turn = (turn+1)%2;
 		update();
+	}
+	
+	/**
+	 * Attempts to move an actor from the picked tile to the selected tile
+	 */
+	public void move(){
+		if(select[0] != -1 && select[1] != -1){
+		if(pick[0] != -1 && pick[1] != -1){
+			if(select[0] != pick[0] || select[1] != pick[1]){
+				if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER) //200 mob
+				if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE)
+				if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || (map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE && ((DoorTile) map.getTile(select[0], select[1], 1)).isOpen())){
+					Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+					if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+					if(picked.canMoveTo(select[0], select[1])){
+						map.move(pick[0], pick[1], select[0], select[1], 2);
+						pick[0] = select[0];
+						pick[1] = select[1];
+						action[turn]--;
+					}
+				}
+			}
+		}
+		}
+	}
+	
+	/**
+	 * Attempts to attack the selected actor with the picked actor
+	 */
+	public void attack(){
+		if(select[0] != -1 && select[1] != -1){
+		if(pick[0] != -1 && pick[1] != -1){
+			if(select[0] != pick[0] || select[1] != pick[1]){
+				if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER){
+					if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
+						Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+						Actor selected = (Actor) map.getTile(select[0], select[1], 2);
+						if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+							if(picked.canAttack(select[0], select[1])){
+								if(map.attack(pick[0], pick[1], select[0], select[1], 2)) //tests if dead after
+									if(selected.getType() >= Tile.MONSTER)
+										mobs.remove(selected);
+									else
+										party.remove(selected);
+								action[turn]--;
+							}
+					}
+					else if(map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE){
+						Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
+						DoorTile selected = (DoorTile) map.getTile(select[0], select[1], 1);
+						if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+							if(picked.canAttack(select[0], select[1])){
+								selected.toggleOpen();
+								action[turn]--;
+							}
+					}
+				}
+			}
+		}
+		}
+	}
+	
+	/**
+	 * Attempts to create an actor at the selected tile
+	 */
+	public void create(){
+	if(turn == 0){
+		if(state == 0){
+			if(select[0] != -1 && select[1] != -1){
+			if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
+				int x = -1, y = -1;
+				for(int i = 0; i < map.getSize()[0]; i++)
+					for(int j = 0; j < map.getSize()[1]; j++)
+						if(map.getTile(i, j, 1).tileType == Tile.SPAWN_TILE){
+							x = i;
+							y = j;
+						}
+				if(Math.abs(select[0] - x) <= 1 && Math.abs(select[1] - y) <= 1){
+					Fighter swrd = new Fighter(map, select[0], select[1]);
+					party.add(swrd);
+					//System.out.println(select[0]+" "+select[1]);
+					map.placeTile(select[0], select[1], 2, swrd);
+					action[turn]-=3;
+				}
+			}
+		}
+		}
+	}
+	if(turn == 1){ //needs to be able to switch mob type
+		if(!(select[0] == -1 && select[1] == -1)){
+			if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
+				boolean hidden = true;
+				for(Adventurer a: party)
+					if(a.canSee(select[0], select[1]))
+						hidden = false;
+				SpawnTile spawn= null;
+				for(int m = 0; m < WIDTH; m++)
+					for(int n = 0; n < HEIGHT; n++)
+						if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+							spawn = (SpawnTile) map.getTile(m, n, 1);
+				if(spawn.canSee(select[0], select[1]))
+					hidden = false;
+				if(hidden){
+					Slim slim = new Slim(map, select[0], select[1]);
+					mobs.add(slim);
+					map.placeTile(select[0], select[1], 2, slim);
+					action[turn]-=5;
+				}
+			}
+		}
+	}
 	}
 	
 	/**
@@ -477,9 +653,9 @@ public class Dungeone extends Canvas{
 		}
 		if(turn == 1)
 			info = true;
-		if(info){
+		if(info && pick[0] != -1 && pick[1] != -1){
 			g.drawString("Layer 0:", 900, 48);
-			switch(map.getTile(select[0], select[1], 0).getType()){
+			switch(map.getTile(pick[0], pick[1], 0).getType()){
 				case Tile.FLOOR_TILE:
 					g.drawString("Floor", 900, 60);
 					g.drawString("You walk on it.", 900, 72);
@@ -488,7 +664,7 @@ public class Dungeone extends Canvas{
 					g.drawString("Nothing of interest", 900, 60);
 			}
 			g.drawString("Layer 1:", 900, 108);
-			switch(map.getTile(select[0], select[1], 1).getType()){
+			switch(map.getTile(pick[0], pick[1], 1).getType()){
 				case Tile.WALL_TILE:
 					g.drawString("Wall", 900, 120);
 					g.drawString("You can't walk on it.", 900, 132);
@@ -503,7 +679,7 @@ public class Dungeone extends Canvas{
 					break;
 				case Tile.DOOR_TILE:
 					g.drawString("Door", 900, 120);
-					g.drawString("Open: " + ((DoorTile)map.getTile(select[0], select[1], 1)).isOpen(), 900, 132);
+					g.drawString("Open: " + ((DoorTile)map.getTile(pick[0], pick[1], 1)).isOpen(), 900, 132);
 					g.drawString("You can sometimes walk on it.", 900, 144);
 					break;
 				default:
@@ -511,13 +687,13 @@ public class Dungeone extends Canvas{
 			}
 			Actor temp;
 			g.drawString("Layer 2:", 900, 168);
-			switch(map.getTile(select[0], select[1], 2).getType()){
+			switch(map.getTile(pick[0], pick[1], 2).getType()){
 				case Tile.WALL_TILE:
 					g.drawString("Wall", 900, 180);
 					g.drawString("You can't walk on it.", 900, 192);
 					break;
 				case Tile.FIGHTER:
-					temp = ((Actor)map.getTile(select[0], select[1], 2));
+					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
 					g.drawString("Fighter", 900, 180);
 					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
 					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
@@ -525,7 +701,7 @@ public class Dungeone extends Canvas{
 					g.drawString("Adventurer with a sword.", 900, 228);
 					break;
 				case Tile.SLIM:
-					temp = ((Actor)map.getTile(select[0], select[1], 2));
+					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
 					g.drawString("Slim", 900, 180);
 					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
 					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);

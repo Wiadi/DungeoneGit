@@ -21,8 +21,8 @@ public class GameMap
 		spnX=-1;
 		spnY=-1;
 		tiles=new Tile[width][height][3];
-//		randMap();
-		genMap();
+		randMap();
+//		genMap();
 //		dispMap();
 		for(int i=0;i<width;i++)
 			for(int j=0;j<height;j++)
