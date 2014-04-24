@@ -16,6 +16,10 @@ public class GameMap
 	private int spnY;
 	public GameMap(int width, int height)
 	{
+		objX=-1;
+		objY=-1;
+		spnX=-1;
+		spnY=-1;
 		tiles=new Tile[width][height][3];
 //		randMap();
 		genMap();
@@ -84,6 +88,11 @@ public class GameMap
 		{
 			objX=x;
 			objY=y;
+		}
+		if(toPlace.getType()==Tile.SPAWN_TILE)
+		{
+			spnX=x;
+			spnY=y;
 		}
 		Tile temp=tiles[x][y][layer];
 		tiles[x][y][layer]=toPlace;
@@ -308,9 +317,14 @@ public class GameMap
 		{
 			for(int i=0;i<openSet.length;i++)
 				for(int j=0;j<openSet[0].length;j++)
-					;
+					if(openSet[i][j] && fScore[i][j]<fScore[current[0]][current[1]])
+					{
+						current[0]=i;
+						current[1]=j;
+					}
 			if(current[0]==xe && current[1]==ye)
 				return reconstructPath(cameFrom, xe, ye);
+			openSet[current[0]][current[1]]=false;
 			for(int[] i:neighborList(current))
 			{
 				
