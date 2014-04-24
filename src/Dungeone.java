@@ -162,6 +162,19 @@ public class Dungeone extends Canvas{
 						pick[1] = -1;
 					}
 					break;
+				case 't':
+					if(select[0] != -1 && select[1] != -1)
+					if(pick[0] != -1 && pick[1] != -1){
+						ArrayList<int[]> path = map.aStar(select[0], select[1], pick[0], pick[1]);
+						if(path == null)
+							System.out.println("Andy was right");
+						else{
+						for(int[] point: path){
+							System.out.println(point[0] + ", " + point[1]);
+						}
+						}
+					}
+					break;
 				//z to move from pick to select
 				case 'z':	//potentially inefficient
 					move();
@@ -454,6 +467,18 @@ public class Dungeone extends Canvas{
 	}
 	if(turn == 1){ //needs to be able to switch mob type
 		if(!(select[0] == -1 && select[1] == -1)){
+			boolean goal = false;
+			for(int i = 0; i < WIDTH; i++)
+				for(int j = 0; j < HEIGHT; j++)
+					if(map.getTile(i, j, 1).getType() == Tile.OBJECTIVE)
+						goal = true;
+			if(!goal){
+				if(map.getTile(select[0], select[1], 1).getType() == Tile.EMPTY_TILE){
+					ObjectiveTile obj = new ObjectiveTile(map, select[0], select[1]);
+					map.placeTile(select[0], select[1], 1, obj);
+				}
+			}
+			if(goal){
 			if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE){
 				boolean hidden = true;
 				for(Adventurer a: party)
@@ -472,6 +497,7 @@ public class Dungeone extends Canvas{
 					map.placeTile(select[0], select[1], 2, slim);
 					action[turn]-=5;
 				}
+			}
 			}
 		}
 	}
