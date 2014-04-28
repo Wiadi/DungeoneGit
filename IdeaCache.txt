@@ -1,3 +1,11 @@
+OBJECTIVES
+------------
+1) Randomized Maps
+2) New Monsters/Adventurers
+3) Traps/Treasure
+4) Improved GUI
+5) Networking
+
 ADVENTURERS
 ------------
 Thieves, with higher move and vision
@@ -24,10 +32,16 @@ ITEMS
 
 OTHER
 ------------
+ - Instead of a create button, have a button that marks all viable tiles. Other buttons on a marked tile will spawn instead.
+ - Change spawn's name to Enter, or something else that sounds less like a monster thing
+ - Keep and display a log of actions, not sure how to display during transition
+ - Adjust a* to account for different types of adjacency, allowing different movement patterns
+ 
+ COMPLETED
+ ------------
  - Screen between turns to avoid hotseat screenpeeking - Check
  - Walls blocking line of sight - Check
- - Instead of a create button, have a button that marks all viable tiles. Other buttons on a marked tile will spawn instead.
  - Continual vision at spawn - Check
- - Change spawn's name to Enter, or something else that sounds less like a monster thing
  - Information about selected tile - Check
- - Keep and display a log of actions, not sure how to display during transition
+ 
+ 

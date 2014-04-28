@@ -105,6 +105,9 @@ public class Dungeone extends Canvas{
 		while(state == 0 || !(map.checkObjective() || party.isEmpty())){ //no end during setup
 			turn();
 		}
+		state = 1;
+		turn = 1;
+		update(); //visibility at end
 	}
 	
 	/**
@@ -390,12 +393,21 @@ public class Dungeone extends Canvas{
 				if(map.getTile(select[0], select[1], 2).getType() == Tile.EMPTY_TILE)
 				if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || (map.getTile(select[0], select[1], 1).getType() == Tile.DOOR_TILE && ((DoorTile) map.getTile(select[0], select[1], 1)).isOpen())){
 					Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
-					if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
-					if(picked.canMoveTo(select[0], select[1])){
-						map.move(pick[0], pick[1], select[0], select[1], 2);
-						pick[0] = select[0];
-						pick[1] = select[1];
-						action[turn]--;
+					if((turn == 0 && state != 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER)){
+						//if(picked.canMove(select[0], select[1])
+						ArrayList<int[]> path = map.aStar(pick[0], pick[1], select[0], select[1]);
+						if(path == null)
+							System.out.println("Andy was right");
+						else
+						for(int[] point: path){
+							System.out.println(point[0] + ", " + point[1]);
+						}
+						if(path != null && (path.size() - 1) <= action[turn]*picked.getMoveRange()){
+							map.move(pick[0], pick[1], select[0], select[1], 2);
+							pick[0] = select[0];
+							pick[1] = select[1];
+							action[turn] -= (path.size() - 1)/picked.getMoveRange();
+						}
 					}
 				}
 			}
@@ -414,7 +426,7 @@ public class Dungeone extends Canvas{
 					if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
 						Actor picked = (Actor) map.getTile(pick[0], pick[1], 2);
 						Actor selected = (Actor) map.getTile(select[0], select[1], 2);
-						if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
+						if((turn == 0 && state != 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
 							if(picked.canAttack(select[0], select[1])){
 								if(map.attack(pick[0], pick[1], select[0], select[1], 2)) //tests if dead after
 									if(selected.getType() >= Tile.MONSTER)
@@ -468,14 +480,24 @@ public class Dungeone extends Canvas{
 	if(turn == 1){ //needs to be able to switch mob type
 		if(!(select[0] == -1 && select[1] == -1)){
 			boolean goal = false;
+			SpawnTile spawn = null;
 			for(int i = 0; i < WIDTH; i++)
 				for(int j = 0; j < HEIGHT; j++)
 					if(map.getTile(i, j, 1).getType() == Tile.OBJECTIVE)
 						goal = true;
 			if(!goal){
-				if(map.getTile(select[0], select[1], 1).getType() == Tile.EMPTY_TILE){
-					ObjectiveTile obj = new ObjectiveTile(map, select[0], select[1]);
-					map.placeTile(select[0], select[1], 1, obj);
+//				SpawnTile spawn = null;
+				for(int i = 0; i < map.getSize()[0]; i++)
+					for(int j = 0; j < map.getSize()[1]; j++)
+						if(map.getTile(i, j, 1).tileType == Tile.SPAWN_TILE)
+							spawn = (SpawnTile) map.getTile(i, j, 1);
+				if(spawn != null && map.getTile(select[0], select[1], 1).getType() == Tile.EMPTY_TILE){
+					map.toggleDoors();
+					if(map.aStar(spawn.getX(), spawn.getY(), select[0], select[1]) != null){
+						ObjectiveTile obj = new ObjectiveTile(map, select[0], select[1]);
+						map.placeTile(select[0], select[1], 1, obj);
+					}
+					map.toggleDoors();
 				}
 			}
 			if(goal){
@@ -484,7 +506,7 @@ public class Dungeone extends Canvas{
 				for(Adventurer a: party)
 					if(a.canSee(select[0], select[1]))
 						hidden = false;
-				SpawnTile spawn= null;
+//				SpawnTile spawn= null;
 				for(int m = 0; m < WIDTH; m++)
 					for(int n = 0; n < HEIGHT; n++)
 						if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
@@ -501,6 +523,35 @@ public class Dungeone extends Canvas{
 			}
 		}
 	}
+	}
+	
+	/**
+	 * Checks if any Adventurer tile or Spawn tile can see a given tile
+	 * @param x - x location of the tile being checked
+	 * @param y - y location of the tile being checked
+	 * @return boolean whether the tile is seen 
+	 */
+	public boolean vision(int x, int y){
+		boolean seen = false;
+//		ArrayList<int[]> path;
+		SpawnTile spawn= null;
+		for(int i = 0; i < WIDTH; i++)
+			for(int j = 0; j < HEIGHT; j++)
+				if(map.getTile(i, j, 1).tileType == Tile.SPAWN_TILE)
+					spawn = (SpawnTile) map.getTile(i, j, 1);
+		if(spawn!= null){
+//			path = map.aStar(spawn.getX(), spawn.getY(), x, y);
+//			if(path != null && path.size() - 1 <= 5)
+			if(spawn.canSee(x, y))
+				seen = true;
+		}
+		for(Adventurer a: party){
+//			path = map.aStar(a.getX(), a.getY(), x, y);
+//			if(path != null && path.size() - 1 <= a.getVisRange())
+			if(a.canSee(x, y))
+				seen = true;
+		}
+		return seen;
 	}
 	
 	/**
@@ -548,12 +599,13 @@ public class Dungeone extends Canvas{
 				
 				if(state == 0){ //spawn grants vision during setup
 					g.setColor(Color.black);
-					SpawnTile spawn= null;
-					for(int m = 0; m < WIDTH; m++)
-						for(int n = 0; n < HEIGHT; n++)
-							if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
-								spawn = (SpawnTile) map.getTile(m, n, 1);
-					if(spawn != null && spawn.canSee(i, j)){
+//					SpawnTile spawn= null;
+//					for(int m = 0; m < WIDTH; m++)
+//						for(int n = 0; n < HEIGHT; n++)
+//							if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+//								spawn = (SpawnTile) map.getTile(m, n, 1);
+//					if(spawn != null && spawn.canSee(i, j)){
+					if(vision(i, j)){
 						if(map.getTile(i, j, 2).tileType == Tile.ADVENTURER)
 							g.setColor(Color.blue);
 						else if(map.getTile(i, j, 2).tileType == Tile.WALL_TILE)
@@ -614,16 +666,20 @@ public class Dungeone extends Canvas{
 //									if(map.getTile(x, y, 2).getType() < Tile.MONSTER)
 //										if(((Adventurer)(map.getTile(x, y, 2))).canSee(x-i, y-j))
 //											g.fillRect(i*40+105, j*40+45, 30, 30);
-						SpawnTile spawn= null;
-						for(int m = 0; m < WIDTH; m++)
-							for(int n = 0; n < HEIGHT; n++)
-								if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
-									spawn = (SpawnTile) map.getTile(m, n, 1);
-						if(spawn!= null && spawn.canSee(i, j))
+
+//						SpawnTile spawn= null;
+//						for(int m = 0; m < WIDTH; m++)
+//							for(int n = 0; n < HEIGHT; n++)
+//								if(map.getTile(m, n, 1).tileType == Tile.SPAWN_TILE)
+//									spawn = (SpawnTile) map.getTile(m, n, 1);
+//						if(spawn!= null && spawn.canSee(i, j))
+//							g.fillRect(i*15+102, j*15+42, 10, 10);
+//						for(Adventurer a: party)
+//							if(a.canSee(i, j))
+//								g.fillRect(i*15+102, j*15+42, 10, 10);
+						
+						if(vision(i, j))
 							g.fillRect(i*15+102, j*15+42, 10, 10);
-						for(Adventurer a: party)
-							if(a.canSee(i, j))
-								g.fillRect(i*15+102, j*15+42, 10, 10);
 					}
 					if(turn == 1)
 						g.fillRect(i*15+102, j*15+42, 10, 10);
@@ -697,7 +753,7 @@ public class Dungeone extends Canvas{
 					break;
 				case Tile.OBJECTIVE:
 					g.drawString("Objective", 900, 120);
-					g.drawString("A winrar is any adventurer here.", 800, 132);
+					g.drawString("A winrar is any adventurer here.", 900, 132);
 					break;
 				case Tile.SPAWN_TILE:
 					g.drawString("Spawn", 900, 120);
