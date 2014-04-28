@@ -274,7 +274,7 @@ public class GameMap
 		boolean[][] closedSet=new boolean[tiles.length][tiles[0].length];
 		boolean[][] openSet=new boolean[tiles.length][tiles[0].length];
 		openSet[xs][ys]=true;
-		String[][] cameFrom=new String[tiles.length][tiles[0].length];
+		int[][][] cameFrom=new int[tiles.length][tiles[0].length][2];
 		int[][] gScore=new int[tiles.length][tiles[0].length];
 		gScore[xs][ys]=0;
 		int[][] fScore=new int[tiles.length][tiles[0].length];
@@ -306,7 +306,7 @@ public class GameMap
 				tentativeGScore=gScore[current[0]][current[1]]+1;
 				if(!openSet[i[0]][i[1]] || tentativeGScore<gScore[i[0]][i[1]])
 				{
-					cameFrom[i[0]][i[1]]=current[0]+", "+current[1];
+					cameFrom[i[0]][i[1]]=current;
 					gScore[i[0]][i[1]]=tentativeGScore;
 					fScore[i[0]][i[1]]=gScore[i[0]][i[1]]+Math.abs(i[0]-xe)+Math.abs(i[1]-ye);
 					openSet[i[0]][i[1]]=true;
@@ -316,32 +316,13 @@ public class GameMap
 		return null;
 	}
 
-	private ArrayList<int[]> reconstructPath(String[][] cameFrom, int[] loc)
+	private ArrayList<int[]> reconstructPath(int[][][] cameFrom, int[] loc)
 	{
 		ArrayList<int[]> path=new ArrayList<int[]>();
 		if(cameFrom[loc[0]][loc[1]]!=null)
-			path=reconstructPath(cameFrom, parseLoc(cameFrom[loc[0]][loc[1]]));
+			path=reconstructPath(cameFrom, cameFrom[loc[0]][loc[1]]);
 		path.add(loc);
 		return path;
-	}
-	
-	private int[] parseLoc(String loc)
-	{
-		boolean flip=true;
-		String x="",y="";
-		for(int i=0;i<loc.length();i++)
-		{
-			if(loc.charAt(i)>47 && loc.charAt(i)<58)
-			{
-				if(flip)
-					x+=loc.substring(i,i+1);
-				else
-					y+=loc.substring(i,i+1);
-			}
-			else
-				flip=false;
-		}
-		return new int[]{Integer.parseInt(x),Integer.parseInt(y)};
 	}
 	
 	private ArrayList<int[]> neighborList(int[] loc)
