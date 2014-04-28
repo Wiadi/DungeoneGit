@@ -10,6 +10,11 @@ public abstract class Adventurer extends Actor
 		super(m,x,y);
 		tileType=ADVENTURER;
 	}
+	
+	public int getVisRange()
+	{
+		return visionRange;
+	}
 	public boolean canSee(int x, int y)
 	{
 		if(Math.pow(Math.abs(x-xPos),2)+Math.pow(Math.abs(y-yPos),2)<=Math.pow(visionRange,2))

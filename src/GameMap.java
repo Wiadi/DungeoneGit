@@ -14,9 +14,11 @@ public class GameMap
 	private int objY;
 	private int spnX;
 	private int spnY;
+	private ArrayList<int[]> warpTiles;
 	public GameMap(int width, int height)
 	{
 		tiles=new Tile[width][height][3];
+		warpTiles=new ArrayList<int[]>();
 		randMap();
 //		genMap();
 //		dispMap();
@@ -90,6 +92,8 @@ public class GameMap
 			spnX=x;
 			spnY=y;
 		}
+		if(toPlace.getType()==Tile.WARP_TILE)
+			warpTiles.add(new int[]{x,y});
 		Tile temp=tiles[x][y][layer];
 		tiles[x][y][layer]=toPlace;
 		return temp;
@@ -215,7 +219,6 @@ public class GameMap
 			{
 				if(!spawnSet && ((x==width-Room.WIDTH && y==height-Room.HEIGHT) || (int)(Math.random()*(width/Room.WIDTH)*(height/Room.HEIGHT))==0))
 				{
-					System.out.println(spawnSet);
 					hold=new Room(this, Room.SPAWN, x, y);
 					spawnSet=true;
 					spnX=x+(Room.WIDTH-1)/2;
@@ -362,6 +365,9 @@ public class GameMap
 			neighbors.add(new int[]{x-1,y});
 		if(x>0 && y>0 && canMoveOver(tiles[x-1][y-1]))
 			neighbors.add(new int[]{x-1,y-1});
+		if(tiles[x][y][1].getType()==Tile.WARP_TILE)
+			for(int i=0;i<warpTiles.size();i++)
+				neighbors.addAll(neighborList(warpTiles.get(i)));
 		return neighbors;
 	}
 	
@@ -377,5 +383,29 @@ public class GameMap
 	private boolean canMoveOver(Tile[] t)
 	{
 		return (t[2].getType()==Tile.EMPTY_TILE || (t[1].getType()==Tile.DOOR_TILE && ((DoorTile)t[1]).isOpen()));
+	}
+	
+	private void toggleDoors()
+	{
+		for(int x=0;x<tiles.length;x++)
+			for(int y=0;y<tiles[0].length;y++)
+				if(tiles[x][y][1].getType()==Tile.DOOR_TILE)
+					((DoorTile)tiles[x][y][1]).toggleOpen();
+	}
+	
+	private void warpConnect()
+	{
+		
+	}
+	
+	private boolean[][] checkConnected(int x, int y)
+	{
+		boolean[][] unreach=new boolean[tiles.length][tiles[0].length];
+		for(int i=0;i<tiles.length;i++)
+			for(int j=0;j<tiles[0].length;j++)
+				if(tiles[i][j][1].getType()==Tile.EMPTY_TILE)
+					if(aStar(x,y,i,j)==null)
+						unreach[i][j]=true;
+		return unreach;
 	}
 }
