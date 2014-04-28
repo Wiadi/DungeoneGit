@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Scanner;
 /**
  * Stores all map data for the current floor in three two-dimensional grids and modifies
@@ -347,21 +346,21 @@ public class GameMap
 	{
 		ArrayList<int[]> neighbors=new ArrayList<int[]>();
 		int x=loc[0], y=loc[1];
-		if(y>0 && (tiles[x][y-1][2].getType()==Tile.EMPTY_TILE || (tiles[x][y-1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x][y-1][1])).isOpen())))
+		if(y>0 && canMoveOver(tiles[x][y-1]))
 			neighbors.add(new int[]{x,y-1});
-		if(x<tiles.length-1 && y>0 && (tiles[x+1][y-1][2].getType()==Tile.EMPTY_TILE || (tiles[x+1][y-1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x+1][y-1][1])).isOpen())))
+		if(x<tiles.length-1 && y>0 && canMoveOver(tiles[x+1][y-1]))
 			neighbors.add(new int[]{x+1,y-1});
-		if(x<tiles.length-1 && (tiles[x+1][y][2].getType()==Tile.EMPTY_TILE || (tiles[x+1][y][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x+1][y][1])).isOpen())))
+		if(x<tiles.length-1 && canMoveOver(tiles[x+1][y]))
 			neighbors.add(new int[]{x+1,y});
-		if(x<tiles.length-1 && y<tiles[0].length-1 && (tiles[x+1][y+1][2].getType()==Tile.EMPTY_TILE || (tiles[x+1][y+1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x+1][y+1][1])).isOpen())))
+		if(x<tiles.length-1 && y<tiles[0].length-1 && canMoveOver(tiles[x+1][y+1]))
 			neighbors.add(new int[]{x+1,y+1});
-		if(y<tiles[0].length-1 && (tiles[x][y+1][2].getType()==Tile.EMPTY_TILE || (tiles[x][y+1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x][y+1][1])).isOpen())))
+		if(y<tiles[0].length-1 && canMoveOver(tiles[x][y+1]))
 			neighbors.add(new int[]{x,y+1});
-		if(x>0 && y<tiles[0].length-1 && (tiles[x-1][y+1][2].getType()==Tile.EMPTY_TILE || (tiles[x-1][y+1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x-1][y+1][1])).isOpen())))
+		if(x>0 && y<tiles[0].length-1 && canMoveOver(tiles[x-1][y+1]))
 			neighbors.add(new int[]{x-1,y+1});
-		if(x>0 && (tiles[x-1][y][2].getType()==Tile.EMPTY_TILE || (tiles[x-1][y][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x-1][y][1])).isOpen())))
+		if(x>0 && canMoveOver(tiles[x-1][y]))
 			neighbors.add(new int[]{x-1,y});
-		if(x>0 && y>0 && (tiles[x-1][y-1][2].getType()==Tile.EMPTY_TILE || (tiles[x-1][y-1][1].getType()==Tile.DOOR_TILE && ((DoorTile)(tiles[x-1][y-1][1])).isOpen())))
+		if(x>0 && y>0 && canMoveOver(tiles[x-1][y-1]))
 			neighbors.add(new int[]{x-1,y-1});
 		return neighbors;
 	}
@@ -373,5 +372,10 @@ public class GameMap
 				if(set[x][y])
 					return false;
 		return true;
+	}
+	
+	private boolean canMoveOver(Tile[] t)
+	{
+		return (t[2].getType()==Tile.EMPTY_TILE || (t[1].getType()==Tile.DOOR_TILE && ((DoorTile)t[1]).isOpen()));
 	}
 }
