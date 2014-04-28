@@ -385,7 +385,7 @@ public class GameMap
 		return (t[2].getType()==Tile.EMPTY_TILE || (t[1].getType()==Tile.DOOR_TILE && ((DoorTile)t[1]).isOpen()));
 	}
 	
-	private void toggleDoors()
+	public void toggleDoors()
 	{
 		for(int x=0;x<tiles.length;x++)
 			for(int y=0;y<tiles[0].length;y++)
@@ -406,6 +406,10 @@ public class GameMap
 				if(tiles[i][j][1].getType()==Tile.EMPTY_TILE)
 					if(aStar(x,y,i,j)==null)
 						unreach[i][j]=true;
+		boolean[][] source=new boolean[tiles.length][tiles[0].length];
+		for(int i=0;i<source.length;i++)
+			for(int j=0;j<source[0].length;j++)
+				source[i][j]=false;
 		return unreach;
 	}
 }
