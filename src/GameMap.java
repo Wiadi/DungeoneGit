@@ -395,7 +395,11 @@ public class GameMap
 	
 	private void warpConnect()
 	{
-		
+		int x=0,y=0;
+		while(!checkEmpty(checkConnected(x,y)))
+		{
+			
+		}
 	}
 	
 	private boolean[][] checkConnected(int x, int y)
@@ -403,13 +407,12 @@ public class GameMap
 		boolean[][] unreach=new boolean[tiles.length][tiles[0].length];
 		for(int i=0;i<tiles.length;i++)
 			for(int j=0;j<tiles[0].length;j++)
-				if(tiles[i][j][1].getType()==Tile.EMPTY_TILE)
-					if(aStar(x,y,i,j)==null)
-						unreach[i][j]=true;
-		boolean[][] source=new boolean[tiles.length][tiles[0].length];
-		for(int i=0;i<source.length;i++)
-			for(int j=0;j<source[0].length;j++)
-				source[i][j]=false;
+			{
+				if(aStar(x,y,i,j)==null)
+					unreach[i][j]=true;
+				else
+					unreach[i][j]=false;
+			}
 		return unreach;
 	}
 }
