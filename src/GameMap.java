@@ -318,7 +318,6 @@ public class GameMap
 
 	private ArrayList<int[]> reconstructPath(String[][] cameFrom, int[] loc)
 	{
-		System.out.println("a");
 		ArrayList<int[]> path=new ArrayList<int[]>();
 		if(cameFrom[loc[0]][loc[1]]!=null)
 			path=reconstructPath(cameFrom, parseLoc(cameFrom[loc[0]][loc[1]]));
