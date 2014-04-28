@@ -396,13 +396,26 @@ public class GameMap
 	private void warpConnect()
 	{
 		int x=0,y=0;
-		while(!checkEmpty(checkConnected(x,y)))
+		int[] telR,telU;
+		ArrayList<int[]> reach=new ArrayList<int[]>();
+		ArrayList<int[]> unreach=new ArrayList<int[]>();
+		boolean[][] ur=listUnreach(x,y);
+		while(!checkEmpty(ur))
 		{
-			
+			for(int i=0;i<ur.length;i++)
+				for(int j=0;j<ur[0].length;j++)
+				{
+					if(ur[i][j])
+						unreach.add(new int[]{i,j});
+					else
+						reach.add(new int[]{i,j});
+				}
+			telR=reach.get((int)(Math.random()*reach.size()));
+			telU=unreach.get((int)(Math.random()*unreach.size()));
 		}
 	}
 	
-	private boolean[][] checkConnected(int x, int y)
+	private boolean[][] listUnreach(int x, int y)
 	{
 		boolean[][] unreach=new boolean[tiles.length][tiles[0].length];
 		for(int i=0;i<tiles.length;i++)
