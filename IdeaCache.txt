@@ -36,6 +36,14 @@ OTHER
  - Change spawn's name to Enter, or something else that sounds less like a monster thing
  - Keep and display a log of actions, not sure how to display during transition
  - Adjust a* to account for different types of adjacency, allowing different movement patterns
+ - "Undo" button for mistaken actions?
+ 
+ TO DO
+ ------------
+ - Separate move and attack commands, preferably with a more intuitive interface
+ - Displayed movement, attack, and vision ranges
+ - Pause between end of turn and blackscreen (require user acknowledgment)
+ - Improved vision (no seeing through doors/around corners/etc.)
  
  COMPLETED
  ------------
@@ -43,5 +51,3 @@ OTHER
  - Walls blocking line of sight - Check
  - Continual vision at spawn - Check
  - Information about selected tile - Check
- 
- 

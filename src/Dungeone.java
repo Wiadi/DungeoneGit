@@ -29,6 +29,8 @@ public class Dungeone extends Canvas{
 	private int[] select; //mobile
 	private int[] pick; //fixed
 	private int state; //0-setup, 1-standard, 2-switch
+	private boolean cont;
+	private boolean end;
 	private Graphics g;
 	private BufferedImage buff;
 	private KeyEvent event;
@@ -123,8 +125,9 @@ public class Dungeone extends Canvas{
 			action[turn] = 20;
 		update();
 		
-		boolean cont = true;
-		while(cont){ //pass conditions, end conditions
+		cont = true;
+		end = false;
+		while(!end){ //pass conditions, end conditions
 			try {Thread.sleep(1l);} 
 			catch (InterruptedException e) {}
 			if(event != null || event2 != null){
@@ -180,7 +183,8 @@ public class Dungeone extends Canvas{
 					break;
 				//z to move from pick to select
 				case 'z':	//potentially inefficient
-					move();
+					if(cont)
+						move();
 //					if(select[0] != -1 && select[1] != -1){
 //					if(pick[0] != -1 && pick[1] != -1){
 //						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER) //200 mob
@@ -200,7 +204,8 @@ public class Dungeone extends Canvas{
 					break;
 				//x to have pick attack select 
 				case 'x': //potentially inefficient
-					attack();
+					if(cont)
+						attack();
 //					if(select[0] != -1 && select[1] != -1){
 //					if(pick[0] != -1 && pick[1] != -1){
 //						if(map.getTile(pick[0], pick[1], 2).getType() >= Tile.ADVENTURER){
@@ -234,7 +239,8 @@ public class Dungeone extends Canvas{
 					break;
 				//c to place a unit	on select
 				case 'c':
-					create();
+					if(cont)
+						create();
 //					if(turn == 0){
 //						if(state == 0){
 //							if(select[0] != -1 && select[1] != -1){
@@ -284,8 +290,12 @@ public class Dungeone extends Canvas{
 				//r or p to pass turn	
 				case 'r':
 				case 'p':	
-					if(state == 0 || state == 1) //maybe change
-						cont = false;
+					if(state == 0 || state == 1){ //maybe change
+						if(cont)
+							cont = false;
+						else
+							end = true;
+					}	
 					break;
 				default:
 					switch(event.getKeyCode()){
@@ -323,42 +333,48 @@ public class Dungeone extends Canvas{
 						select[0] = x;
 						select[1] = y;
 						if(event2.getButton() == MouseEvent.BUTTON1){
+							if(cont){
 							if(pick[0] == x && pick[1] == y){
-								System.out.println("Create");
+								//System.out.println("Create");
 								create();
 							}
-							else{
-								pick[0] = x;
-								pick[1] = y;
 							}
+							pick[0] = x;
+							pick[1] = y;
 						} //if(m1
 						if(event2.getButton() == MouseEvent.BUTTON3){ //right click is m3
 							select[0] = x;
 							select[1] = y;
 							//pretests?
+							if(cont){
 							if(map.getTile(select[0], select[1], 2).getType() < Tile.ADVENTURER){
 								if(map.getTile(select[0], select[1], 1).getType() != Tile.DOOR_TILE || ((DoorTile) map.getTile(select[0], select[1], 1)).isOpen()){
-									System.out.println("Move");
+									//System.out.println("Move");
 									move();
 								}
 								else{
-									System.out.println("Door");
+									//System.out.println("Door");
 									attack();
 								}
 							}
 							else if(map.getTile(select[0], select[1], 2).getType() >= Tile.ADVENTURER){
-								System.out.println("Attack");
+								//System.out.println("Attack");
 								attack();
+							}
 							}
 						}//if(m3
 						if(event2.getButton() == MouseEvent.BUTTON2){ //middle is m2
-							if(state == 0 || state == 1) //maybe change
-								cont = false;
+							if(state == 0 || state == 1){ //maybe change
+								if(cont)
+									cont = false;
+								else
+									end = true;
+							}
 						} //m2
 					}//if(in map
-					System.out.println("s: " + select[0] + ", " + select[1]);
-					System.out.println("p: " + pick[0] + ", " + pick[1]);
-					System.out.println(event2.getButton());
+					//System.out.println("s: " + select[0] + ", " + select[1]);
+					//System.out.println("p: " + pick[0] + ", " + pick[1]);
+					//System.out.println(event2.getButton());
 				} //if(event2!=null
 				} //if(state!= 2
 				event = null;
@@ -649,6 +665,8 @@ public class Dungeone extends Canvas{
 									else
 										g.setColor(new Color(110, 63, 25)); //dark brown
 									break;
+								case Tile.WARP_TILE:
+									g.setColor(new Color(25, 25, 100));
 								default:
 									switch(map.getTile(i, j, 0).tileType){
 										case Tile.FLOOR_TILE:
@@ -794,6 +812,8 @@ public class Dungeone extends Canvas{
 					g.drawString("Nothing of interest", 900, 180);
 			}
 			}
+		if(!cont && !end)
+			g.drawString("Turn Ended. Hit R/P/M3 to Pass Turn.", 900, 300);
 		}
 	}
 }
