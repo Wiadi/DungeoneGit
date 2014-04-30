@@ -238,6 +238,9 @@ public class GameMap
 				hold=null;
 			}
 		clearDoors();
+		toggleDoors();
+		warpConnect();
+		toggleDoors();
 	}
 
 	private void clearDoors()
@@ -300,7 +303,7 @@ public class GameMap
 				return reconstructPath(cameFrom, new int[]{xe,ye});
 			openSet[current[0]][current[1]]=false;
 			closedSet[current[0]][current[1]]=true;
-			for(int[] i:neighborList(current))
+			for(int[] i:neighborList(current, new ArrayList<int[]>()))
 			{
 				if(closedSet[i[0]][i[1]])
 					continue;
@@ -345,10 +348,11 @@ public class GameMap
 		return new int[]{Integer.parseInt(x),Integer.parseInt(y)};
 	}
 	
-	private ArrayList<int[]> neighborList(int[] loc)
+	private ArrayList<int[]> neighborList(int[] loc, ArrayList<int[]> check)
 	{
 		ArrayList<int[]> neighbors=new ArrayList<int[]>();
 		int x=loc[0], y=loc[1];
+		boolean checked;
 		if(y>0 && canMoveOver(tiles[x][y-1]))
 			neighbors.add(new int[]{x,y-1});
 		if(x<tiles.length-1 && y>0 && canMoveOver(tiles[x+1][y-1]))
@@ -365,9 +369,18 @@ public class GameMap
 			neighbors.add(new int[]{x-1,y});
 		if(x>0 && y>0 && canMoveOver(tiles[x-1][y-1]))
 			neighbors.add(new int[]{x-1,y-1});
+//		System.out.println(x+" "+y+" "+(tiles[x][y][1].getType()==Tile.WARP_TILE));
+		check.add(loc);
 		if(tiles[x][y][1].getType()==Tile.WARP_TILE)
-			for(int i=0;i<warpTiles.size();i++)
-				neighbors.addAll(neighborList(warpTiles.get(i)));
+			for(int[] i:warpTiles)
+			{
+				checked=false;
+				for(int[] j:check)
+					if(j==i)
+						checked=true;
+				if(!checked)
+					neighbors.addAll(neighborList(i,check));
+			}
 		return neighbors;
 	}
 	
@@ -412,6 +425,9 @@ public class GameMap
 				}
 			telR=reach.get((int)(Math.random()*reach.size()));
 			telU=unreach.get((int)(Math.random()*unreach.size()));
+			placeTile(telR[0], telR[1], 1, new WarpTile(this, telR[0],telR[1]));
+			placeTile(telU[0], telU[1], 1, new WarpTile(this, telU[0],telU[1]));
+			ur=listUnreach(x,y);
 		}
 	}
 	
@@ -421,7 +437,7 @@ public class GameMap
 		for(int i=0;i<tiles.length;i++)
 			for(int j=0;j<tiles[0].length;j++)
 			{
-				if(aStar(x,y,i,j)==null)
+				if(aStar(x,y,i,j)==null && tiles[i][j][1].getType()==Tile.EMPTY_TILE)
 					unreach[i][j]=true;
 				else
 					unreach[i][j]=false;
