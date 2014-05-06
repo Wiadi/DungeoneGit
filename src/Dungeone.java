@@ -429,12 +429,12 @@ public class Dungeone extends Canvas{
 					if((turn == 0 && state != 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER)){
 						//if(picked.canMove(select[0], select[1])
 						ArrayList<int[]> path = map.aStar(pick[0], pick[1], select[0], select[1]);
-						if(path == null)
-							System.out.println("No path");
-						else
-						for(int[] point: path){
-							System.out.println(point[0] + ", " + point[1]);
-						}
+//						if(path == null)
+//							System.out.println("No path");
+//						else
+//						for(int[] point: path){
+//							System.out.println(point[0] + ", " + point[1]);
+//						}
 						if(path != null && (path.size() - 1) <= action[turn]*picked.getMoveRange()){
 							map.move(pick[0], pick[1], select[0], select[1], 2);
 							pick[0] = select[0];
@@ -585,6 +585,11 @@ public class Dungeone extends Canvas{
 			if(spawn.canSee(x, y))
 				seen = true;
 		}
+		for(int i = 0; i < WIDTH; i++)
+			for(int j = 0; j < HEIGHT; j++)
+				if(map.getTile(i, j, 1).tileType == Tile.WARP_TILE)
+					if(((WarpTile)(map.getTile(i, j, 1))).canSee(x, y))
+							seen = true;
 		for(Adventurer a: party){
 //			path = map.aStar(a.getX(), a.getY(), x, y);
 //			if(path != null && path.size() - 1 <= a.getVisRange())
