@@ -196,13 +196,13 @@ public class GameMap
 	 * @param layer - layer in which the Actor and target are located
 	 * @return true if (xStart, yStart) refers to the location of an Actor with Baleful Teleport, false else
 	 */
-	public boolean baleTele(int xStart, int yStart, int xEnd, int yEnd, int layer)
+	public boolean baleTele(int xStart, int yStart, int xEnd, int yEnd)
 	{
-		if(tiles[xStart][yStart][layer].getType()>=Tile.ADVENTURER)
-			if(((Actor)tiles[xStart][yStart][layer]).hasAbility(Actor.BALE_TELE))
+		if(tiles[xStart][yStart][2].getType()>=Tile.ADVENTURER)
+			if(((Actor)tiles[xStart][yStart][2]).hasAbility(Actor.BALE_TELE))
 			{
 				int x=(int)(Math.random()*tiles.length);
-				while(!move(xEnd,yEnd,x,(int)(Math.random()*tiles[x].length),layer));
+				while(!move(xEnd,yEnd,x,(int)(Math.random()*tiles[x].length),1));
 				return true;
 			}
 		return false;
