@@ -410,11 +410,14 @@ public class GameMap
 	{
 		int x=spnX,y=spnY;
 		int[] telR,telU;
-		ArrayList<int[]> reach=new ArrayList<int[]>();
-		ArrayList<int[]> unreach=new ArrayList<int[]>();
+		ArrayList<int[]> reach;
+		ArrayList<int[]> unreach;
 		boolean[][] ur=listUnreach(x,y);
+		boolean reachPlaced=false;
 		while(!checkEmpty(ur))
 		{
+			unreach=new ArrayList<int[]>();
+			reach=new ArrayList<int[]>();
 			for(int i=0;i<ur.length;i++)
 				for(int j=0;j<ur[0].length;j++)
 				{
@@ -425,7 +428,11 @@ public class GameMap
 				}
 			telR=reach.get((int)(Math.random()*reach.size()));
 			telU=unreach.get((int)(Math.random()*unreach.size()));
-			placeTile(telR[0], telR[1], 1, new WarpTile(this, telR[0],telR[1]));
+			if(!reachPlaced)
+			{
+				placeTile(telR[0], telR[1], 1, new WarpTile(this, telR[0],telR[1]));
+				reachPlaced=true;
+			}
 			placeTile(telU[0], telU[1], 1, new WarpTile(this, telU[0],telU[1]));
 			for(int i=0;i<ur.length;i++)
 			{
