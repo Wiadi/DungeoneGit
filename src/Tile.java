@@ -19,6 +19,7 @@ public abstract class Tile
 	public final static int ADVENTURER=100;
 	public final static int FIGHTER=ADVENTURER+0;
 	public final static int HEALER=ADVENTURER+1;
+	public final static int RANGER=ADVENTURER+2;
 	public final static int MONSTER=200;
 	public final static int SLIM=MONSTER+0;
 	public final static int IMP=MONSTER+1;

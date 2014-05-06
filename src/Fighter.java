@@ -11,8 +11,8 @@ public class Fighter extends Adventurer
 		baseAttack=2;
 		currentAttack=2;
 		attackRange=1;
-		baseHealth=10;
-		currentHealth=10;
+		baseHealth=15;
+		currentHealth=15;
 		moveRange=1;
 		visionRange=5;
 		regenRate=2;

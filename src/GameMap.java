@@ -375,18 +375,10 @@ public class GameMap
 			neighbors.add(new int[]{x-1,y});
 		if(x>0 && y>0 && canMoveOver(tiles[x-1][y-1]))
 			neighbors.add(new int[]{x-1,y-1});
-//		System.out.println(x+" "+y+" "+(tiles[x][y][1].getType()==Tile.WARP_TILE));
-		check.add(loc);
 		if(tiles[x][y][1].getType()==Tile.WARP_TILE)
 			for(int[] i:warpTiles)
-			{
-				checked=false;
-				for(int[] j:check)
-					if(j==i)
-						checked=true;
-				if(!checked)
-					neighbors.addAll(neighborList(i,check));
-			}
+				if((i[0]!=x || i[1]!=y) && canMoveOver(tiles[i[0]][i[1]]))
+					neighbors.add(i);
 		return neighbors;
 	}
 	
@@ -449,6 +441,7 @@ public class GameMap
 			System.out.println("Looped");
 			ur=listUnreach(x,y);
 		}
+		System.out.println("Warped");
 	}
 	
 	private boolean[][] listUnreach(int x, int y)
