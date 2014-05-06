@@ -14,5 +14,6 @@ public class Slim extends Monster
 		baseHealth=5;
 		currentHealth=5;
 		moveRange=1;
+		regenRate=1;
 	}
 }

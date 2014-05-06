@@ -12,8 +12,10 @@ public abstract class Actor extends Tile
 	protected int baseHealth;
 	protected int currentHealth;
 	protected int moveRange;
-	private final static int NUM_ABILS=1;
+	protected int regenRate;
+	private final static int NUM_ABILS=2;
 	public final static int BALE_TELE=0;
+	public final static int REVIVE=1;
 	public Actor(GameMap m, int x, int y)
 	{
 		super(m,x,y);
@@ -81,5 +83,12 @@ public abstract class Actor extends Tile
 	{
 		currentHealth-=damage;
 		return currentHealth;
+	}
+	/**
+	 * Restores a certain amount of health to an Actor based on its rate of regeneration
+	 */
+	public void regen()
+	{
+		currentHealth=Math.max(baseHealth, currentHealth+regenRate);
 	}
 }

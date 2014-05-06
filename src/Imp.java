@@ -15,5 +15,6 @@ public class Imp extends Monster
 		baseHealth=1;
 		currentHealth=1;
 		moveRange=2;
+		regenRate=0;
 	}
 }

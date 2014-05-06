@@ -208,6 +208,18 @@ public class GameMap
 		return false;
 	}
 	
+	public boolean revive(int xUser, int yUser, int xTarget, int yTarget, Adventurer a)
+	{
+		if(tiles[xUser][yUser][2].getType()>=Tile.ADVENTURER)
+			if(((Actor)tiles[xUser][yUser][2]).hasAbility(Actor.REVIVE))
+				if(tiles[xTarget][yTarget][1].getType()==Tile.EMPTY_TILE)
+				{
+					placeTile(xTarget, yTarget, 2, a);
+					return true;
+				}
+		return false;
+	}
+	
 	private void randMap()
 	{
 		int width=tiles.length;

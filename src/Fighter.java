@@ -15,6 +15,7 @@ public class Fighter extends Adventurer
 		currentHealth=10;
 		moveRange=1;
 		visionRange=5;
+		regenRate=2;
 		for(int i=0;i<abilities.length;i++)
 			abilities[i]=false;
 	}

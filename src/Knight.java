@@ -10,6 +10,7 @@ public class Knight extends Monster
 		attackRange=1;
 		baseHealth=10;
 		currentHealth=10;
+		regenRate=2;
 	}
 	public boolean canMoveTo(int x, int y)
 	{
