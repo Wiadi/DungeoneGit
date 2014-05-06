@@ -408,7 +408,7 @@ public class GameMap
 	
 	private void warpConnect()
 	{
-		int x=0,y=0;
+		int x=spnX,y=spnY;
 		int[] telR,telU;
 		ArrayList<int[]> reach=new ArrayList<int[]>();
 		ArrayList<int[]> unreach=new ArrayList<int[]>();
@@ -420,13 +420,20 @@ public class GameMap
 				{
 					if(ur[i][j])
 						unreach.add(new int[]{i,j});
-					else
+					else if(tiles[i][j][1].getType()==Tile.EMPTY_TILE)
 						reach.add(new int[]{i,j});
 				}
 			telR=reach.get((int)(Math.random()*reach.size()));
 			telU=unreach.get((int)(Math.random()*unreach.size()));
 			placeTile(telR[0], telR[1], 1, new WarpTile(this, telR[0],telR[1]));
 			placeTile(telU[0], telU[1], 1, new WarpTile(this, telU[0],telU[1]));
+			for(int i=0;i<ur.length;i++)
+			{
+				for(int j=0;j<ur[0].length;j++)
+					System.out.print(ur[i][j]+"\t");
+				System.out.println();
+			}
+			System.out.println();
 			ur=listUnreach(x,y);
 		}
 	}

@@ -35,8 +35,8 @@ public class Dungeone extends Canvas{
 	private BufferedImage buff;
 	private KeyEvent event;
 	private MouseEvent event2;
-	private final static int WIDTH=50;
-	private final static int HEIGHT=35;
+	private final static int WIDTH=20;
+	private final static int HEIGHT=20;
 	
 	private int count;
 	
@@ -667,6 +667,7 @@ public class Dungeone extends Canvas{
 									break;
 								case Tile.WARP_TILE:
 									g.setColor(new Color(25, 25, 100));
+									break;
 								default:
 									switch(map.getTile(i, j, 0).tileType){
 										case Tile.FLOOR_TILE:
