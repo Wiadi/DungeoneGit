@@ -35,8 +35,8 @@ public class Dungeone extends Canvas{
 	private BufferedImage buff;
 	private KeyEvent event;
 	private MouseEvent event2;
-	private final static int WIDTH=20;
-	private final static int HEIGHT=20;
+	private final static int WIDTH=50;
+	private final static int HEIGHT=35;
 	
 	private int count;
 	

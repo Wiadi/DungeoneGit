@@ -226,12 +226,6 @@ public class GameMap
 				}
 				else
 					hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1, x, y);
-//				if(xr>0)
-//					while(!hold.checkAdj(rooms[xr-1][yr],3))
-//						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
-//				if(yr>0)
-//					while(!hold.checkAdj(rooms[xr][yr-1],0))
-//						hold=new Room(this, (int)(Math.random()*Room.NUM_TYPES)+1);
 				for(int xr=0;xr<Room.WIDTH;xr++)
 					for(int yr=0;yr<Room.HEIGHT;yr++)
 						tiles[x+xr][y+yr]=hold.getLayout()[xr][yr];
@@ -434,13 +428,13 @@ public class GameMap
 				reachPlaced=true;
 			}
 			placeTile(telU[0], telU[1], 1, new WarpTile(this, telU[0],telU[1]));
-			for(int i=0;i<ur.length;i++)
-			{
-				for(int j=0;j<ur[0].length;j++)
-					System.out.print(ur[i][j]+"\t");
-				System.out.println();
-			}
-			System.out.println();
+//			for(int i=0;i<ur.length;i++)
+//			{
+//				for(int j=0;j<ur[0].length;j++)
+//					System.out.print(ur[i][j]+"\t");
+//				System.out.println();
+//			}
+			System.out.println("Looped");
 			ur=listUnreach(x,y);
 		}
 	}
@@ -457,5 +451,13 @@ public class GameMap
 					unreach[i][j]=false;
 			}
 		return unreach;
+	}
+	
+	public boolean checkWarp()
+	{
+		for(int[] i:warpTiles)
+			if(tiles[i[0]][i[1]][2].getType()>=Tile.ADVENTURER && tiles[i[0]][i[1]][2].getType()<Tile.MONSTER)
+				return true;
+		return false;
 	}
 }
