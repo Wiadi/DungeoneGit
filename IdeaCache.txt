@@ -9,7 +9,7 @@ OBJECTIVES
 ADVENTURERS
 ------------
 Thieves, with higher move and vision
-Class that can resurrect at spawn (themselves? fellow adventurers?
+Class that can resurrect at spawn (themselves? fellow adventurers? idk)
 Ranged Attack
 HP Regen and/or Targeted heal
 
@@ -42,8 +42,8 @@ OTHER
  ------------
  - Separate move and attack commands, preferably with a more intuitive interface
  - Displayed movement, attack, and vision ranges
- - Pause between end of turn and blackscreen (require user acknowledgment)
  - Improved vision (no seeing through doors/around corners/etc.)
+ - Loading screen before map gen
  
  COMPLETED
  ------------
@@ -51,3 +51,4 @@ OTHER
  - Walls blocking line of sight - Check
  - Continual vision at spawn - Check
  - Information about selected tile - Check
+ - Pause between end of turn and blackscreen (require user acknowledgment) - Check
