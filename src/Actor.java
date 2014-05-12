@@ -11,7 +11,7 @@ public abstract class Actor extends Tile
 	protected boolean[] abilities;
 	protected int baseHealth;
 	protected int currentHealth;
-	protected int moveRange;
+	protected double moveRange;
 	protected int regenRate;
 	private final static int NUM_ABILS=2;
 	public final static int BALE_TELE=0;
@@ -38,7 +38,7 @@ public abstract class Actor extends Tile
 	public int getCurrHP(){
 		return currentHealth;
 	}
-	public int getMoveRange(){
+	public double getMoveRange(){
 		return moveRange;
 	}
 	/**

@@ -25,6 +25,7 @@ public abstract class Tile
 	public final static int IMP=MONSTER+1;
 	public final static int KNIGHT=MONSTER+2;
 	public final static int LIVING_WALL=MONSTER+3;
+	public final static int BULK=MONSTER+4;
 	public Tile(GameMap m, int x, int y)
 	{
 		map=m;
