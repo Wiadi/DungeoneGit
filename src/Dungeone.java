@@ -489,12 +489,12 @@ public class Dungeone extends Canvas{
 						map.placeTile(select[0], select[1], 2, slim);
 						action[turn]-=5;
 						break;
-					case 1:
-						Imp inky = new Imp(map, select[0], select[1]);
-						mobs.add(inky);
-						map.placeTile(select[0], select[1], 2, inky);
-						action[turn]-=5;
-						break;
+//					case 1:
+//						Imp inky = new Imp(map, select[0], select[1]);
+//						mobs.add(inky);
+//						map.placeTile(select[0], select[1], 2, inky);
+//						action[turn]-=5;
+//						break;
 					case 2:
 						LivingWall wall = new LivingWall(map, select[0], select[1]);
 						mobs.add(wall);
@@ -850,7 +850,7 @@ public class Dungeone extends Canvas{
 					break;
 				case Tile.LIVING_WALL:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Slim", 900, 180);
+					g.drawString("Wall", 900, 180);
 					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
 					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
 					g.drawString("Move: " + temp.getMoveRange(), 900, 216);
