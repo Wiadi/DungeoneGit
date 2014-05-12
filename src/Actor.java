@@ -61,7 +61,7 @@ public abstract class Actor extends Tile
 	 */
 	public boolean canAttack(int x, int y)
 	{
-		if(Math.abs(x-xPos)<=attackRange && Math.abs(y-yPos)<=attackRange)
+		if((Math.abs(x-xPos)<=attackRange && Math.abs(y-yPos)<=attackRange) || (map.getTile(xPos, yPos, 1).getType()==Tile.WARP_TILE && map.getTile(x, y, 1).getType()==Tile.WARP_TILE))
 			return true;
 		return false;
 	}
@@ -89,6 +89,6 @@ public abstract class Actor extends Tile
 	 */
 	public void regen()
 	{
-		currentHealth=Math.max(baseHealth, currentHealth+regenRate);
+		currentHealth=Math.min(baseHealth, currentHealth+regenRate);
 	}
 }
