@@ -358,7 +358,6 @@ public class GameMap
 	{
 		ArrayList<int[]> neighbors=new ArrayList<int[]>();
 		int x=loc[0], y=loc[1];
-		boolean checked;
 		if(y>0 && canMoveOver(tiles[x][y-1]))
 			neighbors.add(new int[]{x,y-1});
 		if(x<tiles.length-1 && y>0 && canMoveOver(tiles[x+1][y-1]))
@@ -393,7 +392,7 @@ public class GameMap
 	
 	private boolean canMoveOver(Tile[] t)
 	{
-		return (t[2].getType()==Tile.EMPTY_TILE || (t[1].getType()==Tile.DOOR_TILE && ((DoorTile)t[1]).isOpen()));
+		return (t[2].getType()==Tile.EMPTY_TILE && (t[1].getType()!=Tile.DOOR_TILE || ((DoorTile)t[1]).isOpen()));
 	}
 	
 	public void toggleDoors()
