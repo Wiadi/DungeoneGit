@@ -223,7 +223,7 @@ public class Dungeone extends Canvas{
 				case '4':
 				case '5':
 					if(cont)
-						create(event.getKeyChar());
+						create(event.getKeyChar() - 48);
 					break;
 				//r to toggle range indicators	
 				case 'r':
@@ -619,7 +619,7 @@ public class Dungeone extends Canvas{
 //								spawn = (SpawnTile) map.getTile(m, n, 1);
 //					if(spawn != null && spawn.canSee(i, j)){
 					if(vision(i, j)){
-						if(map.getTile(i, j, 2).tileType == Tile.ADVENTURER)
+						if(map.getTile(i, j, 2).tileType >= Tile.ADVENTURER)
 							g.setColor(Color.blue);
 						else if(map.getTile(i, j, 2).tileType == Tile.WALL_TILE)
 							g.setColor(Color.darkGray);
@@ -646,10 +646,15 @@ public class Dungeone extends Canvas{
 						case Tile.WALL_TILE:
 							g.setColor(Color.darkGray);
 							break;
-						case Tile.ADVENTURER:
+						case Tile.FIGHTER:
+						case Tile.RANGER:
+						case Tile.HEALER:
 							g.setColor(Color.blue);
 							break;
-						case Tile.MONSTER:
+						case Tile.SLIM:
+						case Tile.IMP:
+						case Tile.LIVING_WALL:
+						case Tile.BULK:
 							g.setColor(Color.red);
 							break;
 						default:	
