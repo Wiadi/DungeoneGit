@@ -10,8 +10,6 @@ ADVENTURERS
 ------------
 Thieves, with higher move and vision
 Class that can resurrect at spawn (themselves? fellow adventurers? idk)
-Ranged Attack
-HP Regen and/or Targeted heal
 
 MONSTERS
 ------------
@@ -28,27 +26,15 @@ ABILITIES
 
 ITEMS
 ------------
-- *Slayer: Additional damage/instant kill against certain enemy types (random generation?)
+- Torches: 1 hp entities that can be placed by the party for vision
 
 OTHER
 ------------
- - Instead of a create button, have a button that marks all viable tiles. Other buttons on a marked tile will spawn instead.
- - Change spawn's name to Enter, or something else that sounds less like a monster thing
- - Keep and display a log of actions, not sure how to display during transition
  - Adjust a* to account for different types of adjacency, allowing different movement patterns
  - "Undo" button for mistaken actions?
  
  TO DO
  ------------
  - Separate move and attack commands, preferably with a more intuitive interface
- - Displayed movement, attack, and vision ranges
  - Improved vision (no seeing through doors/around corners/etc.)
- - Loading screen before map gen
- 
- COMPLETED
- ------------
- - Screen between turns to avoid hotseat screenpeeking - Check
- - Walls blocking line of sight - Check
- - Continual vision at spawn - Check
- - Information about selected tile - Check
- - Pause between end of turn and blackscreen (require user acknowledgment) - Check
+ - Display log of actions/errors

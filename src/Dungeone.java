@@ -40,13 +40,15 @@ public class Dungeone extends Canvas{
 	private int[] pick; //fixed
 	private int state; //-1-start, 0-setup, 1-standard, 2-switch
 	private boolean ranges;
+	private boolean help;
+	private ArrayList<String> log;
 	private boolean cont;
 	private boolean end;
 	private Graphics g;
 	private BufferedImage buff;
 	private KeyEvent event;
 	private MouseEvent event2;
-	private final static int WIDTH=40;
+	private final static int WIDTH=50;
 	private final static int HEIGHT=40;
 	
 	//FOR NETWORKING
@@ -121,6 +123,8 @@ public class Dungeone extends Canvas{
 		select = new int[]{0,0};
 		pick  = new int[]{-1,-1};
 		ranges = false;
+		help = false;
+		log = new ArrayList<String>();
 //		state = 0;
 //		count = 0;
 //		cont = true;
@@ -163,6 +167,10 @@ public class Dungeone extends Canvas{
 			for(Monster m: mobs)
 				m.regen();
 		ranges = false;
+		log.clear();
+		log.add((action[turn] - 5) + "+5: Started Turn");
+		while(log.size() > 10)
+			log.remove(0);
 		update();
 		
 		cont = true;
@@ -175,6 +183,8 @@ public class Dungeone extends Canvas{
 					state = 1;
 				else if (state == -1)
 					state = 0;
+				else if (help)
+					help = false;
 				else if (state == 0 || state == 1){
 				if(event!= null){
 				switch(event.getKeyChar()){
@@ -247,11 +257,11 @@ public class Dungeone extends Canvas{
 						create(event.getKeyChar() - 48);
 					break;
 				//r to toggle range indicators	
-				case 'r':
+				case 'p':
 					ranges = !ranges;
 					break;
 				//p to pass turn	
-				case 'p':	
+				case 'r':	
 					if(state == 0 || state == 1){ //maybe change
 						if(cont)
 							cont = false;
@@ -281,6 +291,10 @@ public class Dungeone extends Canvas{
 						select[0]++;
 						if (select[0] > WIDTH - 1)
 							select[0] = 0;
+						break;
+					//Enter to bring up help screen
+					case KeyEvent.VK_ENTER:
+						help = true;
 						break;
 					}
 				} //switch(event
@@ -396,6 +410,9 @@ public class Dungeone extends Canvas{
 //						}
 						if(path != null && (path.size() - 1) <= action[turn]*picked.getMoveRange()){
 							map.move(pick[0], pick[1], select[0], select[1], 2);
+							log.add("-" + (int)(path.size() - 1)/picked.getMoveRange() + ": Moved from " + pick[0] + ", " + pick[1] + " to " + select[0] + ", " + select[1]);
+							while(log.size() > 10)
+								log.remove(0);
 							pick[0] = select[0];
 							pick[1] = select[1];
 							action[turn] -= (path.size() - 1)/picked.getMoveRange();
@@ -427,6 +444,9 @@ public class Dungeone extends Canvas{
 										party.remove(selected);
 										dead.add((Adventurer)selected);
 									}
+								log.add("-1: Attacked " + select[0] + ", " + select[1] + " from " + pick[0] + ", " + pick[1]);
+								while(log.size() > 10)
+									log.remove(0);
 								action[turn]--;
 							}
 					}
@@ -435,6 +455,9 @@ public class Dungeone extends Canvas{
 						DoorTile selected = (DoorTile) map.getTile(select[0], select[1], 1);
 						if((turn == 0 && picked.getType() < Tile.MONSTER) || (turn == 1 && picked.getType() >= Tile.MONSTER))
 							if(picked.canAttack(select[0], select[1])){
+								log.add("-1: Opened/Close door at"+ select[0] + ", " + select[1]);
+								while(log.size() > 10)
+									log.remove(0);
 								selected.toggleOpen();
 								action[turn]--;
 							}
@@ -467,18 +490,27 @@ public class Dungeone extends Canvas{
 						party.add(swrd);
 						map.placeTile(select[0], select[1], 2, swrd);
 						action[turn]-=3;
+						log.add("-3: Created Fighter at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
 						break;
 					case 1: 
 						Ranger arro = new Ranger(map, select[0], select[1]);
 						party.add(arro);
 						map.placeTile(select[0], select[1], 2, arro);
 						action[turn]-=3;
+						log.add("-3: Created Ranger at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
 						break;
 					case 2: 
 						Healer heal = new Healer(map, select[0], select[1]);
 						party.add(heal);
 						map.placeTile(select[0], select[1], 2, heal);
 						action[turn]-=3;
+						log.add("-3: Created Healer at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
 						break;
 					}
 				}
@@ -498,6 +530,9 @@ public class Dungeone extends Canvas{
 					if(!vision(select[0], select[1])){
 						ObjectiveTile obj = new ObjectiveTile(map, select[0], select[1]);
 						map.placeTile(select[0], select[1], 1, obj);
+						log.add("-0: Created Objective at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
 					}
 			}
 			if(goal){
@@ -505,10 +540,15 @@ public class Dungeone extends Canvas{
 				if(!vision(select[0], select[1])){
 					switch(type){
 					case 0:
+						if(action[turn] >= 5){
 						Slim slim = new Slim(map, select[0], select[1]);
 						mobs.add(slim);
 						map.placeTile(select[0], select[1], 2, slim);
 						action[turn]-=5;
+						log.add("-5: Created Slim at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
+						}
 						break;
 //					case 1:
 //						Imp inky = new Imp(map, select[0], select[1]);
@@ -517,16 +557,26 @@ public class Dungeone extends Canvas{
 //						action[turn]-=5;
 //						break;
 					case 1:
+						if(action[turn] >= 5){
 						LivingWall wall = new LivingWall(map, select[0], select[1]);
 						mobs.add(wall);
 						map.placeTile(select[0], select[1], 2, wall);
 						action[turn]-=5;
+						log.add("-5: Created Wall at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
+						}
 						break;
 					case 2:
+						if(action[turn] >= 10){
 						Bulk hulk = new Bulk(map, select[0], select[1]);
 						mobs.add(hulk);
 						map.placeTile(select[0], select[1], 2, hulk);
 						action[turn]-=10;
+						log.add("-10: Created Bulk at " + select[0] + ", " + select[1]);
+						while(log.size() > 10)
+							log.remove(0);
+						}
 						break;
 					}
 				}
@@ -606,7 +656,7 @@ public class Dungeone extends Canvas{
 		g.clearRect(0, 0, getWidth(), getHeight());
 		
 		//Intro
-		if(state == -1){
+		if(state == -1 || help){
 			g.setColor(Color.white);
 			g.drawLine(20, 20, 20, 100); //D
 			g.drawLine(20, 20, 60, 60);
@@ -637,17 +687,17 @@ public class Dungeone extends Canvas{
 			g.drawLine(440, 60, 480, 60);
 			g.drawLine(440, 100, 480, 100);
 			
-			g.drawString("Dungeone is a Turn-Based PvP Dungeone Exploratione Game, designed and produced by Rydler Industries.", 20, 120);
-			g.drawString("Player 1, the Dungeonee, is leading a party of adventurers through a perilous dungeone to find a hidden objective.", 20, 132);
-			g.drawString("-The Adventurers are generally stronger and more resilient than monsters", 30, 144);
-			g.drawString("-The Adventurers can only see in a small range around themselves", 30, 156);
-			g.drawString("-A dead Adventurer is pretty darn dead, so don't die", 30, 168);
-			g.drawString("-The Adventurers win if any Adventurer reaches the objective", 30, 180);
-			g.drawString("Player 2, the Dungeoneer, is creating and commanding a mob of monsters to protect the objective.", 20, 192);
-			g.drawString("-The Monsters know the happenings of the entire dungeone", 30, 204);
-			g.drawString("-The Monsters are generally weaker, and rely on ambushes and numbers to win fights", 30, 216);
-			g.drawString("-A dead Monster can be replaced, so dying is okay", 30, 228);
-			g.drawString("-The Monsters win if there are no Adventurers left on the map", 30, 240);
+			g.drawString("Dungeone is a Turne-Based PvP Dungeone Exploratione Game, designed and produced by Rydler Industries.", 20, 132);
+			g.drawString("Player 1, the Dungeonee, is leading a party of adventurers through a perilous dungeone to find a hidden objective.", 20, 144);
+			g.drawString("-The Adventurers are generally stronger and more resilient than monsters", 30, 156);
+			g.drawString("-The Adventurers can only see in a small range around themselves", 30, 168);
+			g.drawString("-A dead Adventurer is pretty damn dead, so try not to die", 30, 180);
+			g.drawString("-The Adventurers win if any Adventurer reaches the objective", 30, 192);
+			g.drawString("Player 2, the Dungeoneer, is creating and commanding a mob of monsters to protect the objective.", 20, 204);
+			g.drawString("-The Monsters know the layout and happenings of the entire dungeone", 30, 216);
+			g.drawString("-The Monsters are generally weaker, and rely on ambushes and numbers to win fights", 30, 228);
+			g.drawString("-A dead Monster can be replaced and will be replaced", 30, 240);
+			g.drawString("-The Monsters win if there are no Adventurers left on the map", 30, 252);
 			
 			g.drawString("Dungeone is played in turns, and uses both mouse and keyboard controls.", 20, 288);
 			g.drawString("Most controls involve either a Selected ( S ) or Picked ( P ) tile in a 2D map.", 20, 300);
@@ -655,7 +705,7 @@ public class Dungeone extends Canvas{
 			g.setColor(Color.green);
 			g.drawRect(315, 290, 12, 12);
 			g.setColor(Color.white);
-			g.drawString("When possible, the picked tile will provide information about all its layers.", 20, 312);
+			g.drawString("When possible, the picked tile will provide information about its layers.", 20, 312);
 			
 			g.drawString("Mouse Controls:", 20, 336);
 			g.drawString("Left Click (M1) sets both S and P to the clicked tile.", 20, 348);
@@ -673,16 +723,17 @@ public class Dungeone extends Canvas{
 			g.drawString("X will make a unit at P attack another unit at S.", 20, 492);
 			g.drawString("C will create a generic unit (0) at S.", 20, 504);
 			g.drawString("1-2 will create a special unit (1-2) at P.", 20, 516);
-			g.drawString("P will end your turn/confirm your turn end.", 20, 528);
-			g.drawString("R will toggle sight/attack range indicators.", 20, 540);
+			g.drawString("R will end your turn/confirm your turn end.", 20, 528);
+			g.drawString("P will toggle sight/attack range indicators.", 20, 540);
+			g.drawString("Enter will return to this screen.", 20, 552);
 			
-			g.drawString("Any action involving a unit costs some number of Action Points (AP).", 20, 564);
-			g.drawString("-AP are increased at the start of each turn, and a turn ends when they are depleted", 30, 576);
-			g.drawString("-AP can also be stored up to a maximum of 15 for later rounds by ending your turn early", 30, 588);
+			g.drawString("Any action involving a unit costs some number of Action Points (AP).", 20, 576);
+			g.drawString("-AP are increased at the start of each turn, and a turn ends when they are depleted", 30, 588);
+			g.drawString("-AP can also be stored up to a maximum of 15 for later rounds by ending your turn early", 30, 600);
 			
-			g.drawString("Creating units works differently for each player.", 20, 612);
-			g.drawString("-Adventurers can only be created on the first turn, and must be adjacent to the spawn tile", 30, 624);
-			g.drawString("-Monsters cannot be created until the objective is placed: The first create will place the objective", 30, 636);
+			g.drawString("Creating units works differently for each player.", 20, 624);
+			g.drawString("-Adventurers can only be created on the first turn, and must be adjacent to the spawn tile", 30, 636);
+			g.drawString("-Monsters cannot be created until the objective is placed: The first create will place the objective", 30, 648);
 
 			g.drawString("Tile Types:", 600, 252);
 			g.drawString("Walls - Can't go through 'em. Simple enough.", 600, 276);
@@ -690,6 +741,8 @@ public class Dungeone extends Canvas{
 			g.drawString("Doors - Attack them to open or close them. Closed doors block movement and vision.", 600, 300);
 			g.setColor(Color.darkGray);
 			g.fillRect(580, 264, 12, 12);
+			g.setColor(Color.lightGray);
+			g.fillRect(580, 276, 12, 12);
 			g.setColor(new Color(110, 63, 25));
 			g.fillRect(580, 288, 12, 12);
 			g.setColor(new Color(176, 128, 96));
@@ -730,13 +783,16 @@ public class Dungeone extends Canvas{
 			g.fillRect(580, 432, 12, 12);
 			g.setColor(Color.white);
 
-			
+			g.drawString("Hit Enter at any time to bring up this screen again.", 600, 552);
 			if(map == null){
 				g.setColor(Color.red);
 				g.drawString("Map generation in progress, please wait.", 600, 540);
 			}
 			if(map!= null){
-				g.drawString("Click or press any key to begin.", 600, 540);
+				if(state == -1)
+					g.drawString("Click or press any key to begin.", 600, 540);
+				else
+					g.drawString("Click or press any key to resume.", 600, 540);
 			}
 		}
 		else{
@@ -882,31 +938,32 @@ public class Dungeone extends Canvas{
 		
 		//Stats 
 		g.setColor(Color.white);
-		g.drawString("Stats:", 0, 12);
-		g.drawString("Turn: "+turn, 0, 24);
-		g.drawString("AP: "+action[turn%2], 0, 36);
-		g.drawString("Select: " +select[0] + ", " + select[1], 0, 48);
-		g.drawString("Pick: " +pick[0] + ", " + pick[1], 0, 60);
-		g.drawString("State: " +state, 0, 72);
-		g.drawString("Frames: "+count, 0, 84);
+		g.drawString("Stats:", 0, 48);
+		g.drawString("Turn: "+(turn+1), 0, 60);
+		g.drawString("AP: "+action[turn], 0, 72);
+		g.drawString("Select: " +select[0] + ", " + select[1], 0, 84);
+		g.drawString("Pick: " +pick[0] + ", " + pick[1], 0, 96);
+//		g.drawString("State: " +state, 0, 72);
+//		g.drawString("Frames: "+count, 0, 84);
 		
 		//Controls
-		g.drawString("Key Controls:", 0, 108);
-		g.drawString("WASD - Move S", 0, 120);
-		g.drawString("Space - Set P", 0, 132);
-		g.drawString("Z - Move P to S", 0, 144);
-		g.drawString("X - Attack S w/ P", 0, 156);
-		g.drawString("C - Create at S", 0, 168);
-		g.drawString("P - Pass Turn", 0, 180);
-		g.drawString("R - Toggle Range", 0, 192);
+		g.drawString("Key Controls:", 0, 144);
+		g.drawString("WASD - Move S", 0, 156);
+		g.drawString("Space - Set P", 0, 168);
+		g.drawString("Z - Move P to S", 0, 180);
+		g.drawString("X - Attack S w/ P", 0, 192);
+		g.drawString("C - Create at S", 0, 204);
+		g.drawString("R - Pass Turn", 0, 216);
+		g.drawString("P - Toggle Range", 0, 228);
+		g.drawString("Enter - Help", 0, 240);
 		
-		g.drawString("Mouse Controls:", 0, 204);
-		g.drawString("M1 - Set S and P", 0, 216);
-		g.drawString("M1 on P - Create", 0, 228);
-		g.drawString("M2 - Move S", 0, 240);
-		g.drawString("M2 - Move P to S", 0, 252);
-		g.drawString("M2 - Attack S w/ P ", 0, 264);
-		g.drawString("M3 - Pass Turn", 0, 276);
+		g.drawString("Mouse Controls:", 0, 264);
+		g.drawString("M1 - Set S and P", 0, 276);
+		g.drawString("M1 on P - Create", 0, 288);
+		g.drawString("M2 - Set S", 0, 300);
+		g.drawString("M2 - Move to S w/ P", 0, 312);
+		g.drawString("M2 - Attack S w/ P ", 0, 324);
+		g.drawString("M3 - Pass Turn", 0, 336);
 		
 		
 		//End Conditions
@@ -922,117 +979,132 @@ public class Dungeone extends Canvas{
 		//Tile Info
 		if(state == 0 || state == 1){
 		if((turn == 1 || vision(pick[0],pick[1])) && pick[0] != -1 && pick[1] != -1){
-			g.drawString("Layer 0:", 900, 48);
+			int base = 60;
+			g.drawString("Tile Information:", 900, base);
+			g.drawString("Layer 0:", 900, base + 12*1);
 			switch(map.getTile(pick[0], pick[1], 0).getType()){
 				case Tile.FLOOR_TILE:
-					g.drawString("Floor", 900, 60);
-					g.drawString("You can walk on it.", 900, 72);
+					g.drawString("Floor", 900, base + 12*2);
+					g.drawString("You can walk on it.", 900, base + 12*3);
 					break;
 				default:
-					g.drawString("Nothing of interest", 900, 60);
+					g.drawString("Nothing of interest", 900, base + 12*2);
 			}
-			g.drawString("Layer 1:", 900, 108);
+			g.drawString("Layer 1:", 900, base + 12*5);
 			switch(map.getTile(pick[0], pick[1], 1).getType()){
 				case Tile.WALL_TILE:
-					g.drawString("Wall", 900, 120);
-					g.drawString("You can't walk on it.", 900, 132);
+					g.drawString("Wall", 900, base + 12*6);
+					g.drawString("You can't walk on it.", 900, base + 12*7);
 					break;
 				case Tile.OBJECTIVE:
-					g.drawString("Objective", 900, 120);
-					g.drawString("A winner is an adventurer here.", 900, 132);
+					g.drawString("Objective", 900, base + 12*6);
+					g.drawString("A winner is an adventurer here.", 900, base + 12*7);
 					break;
 				case Tile.SPAWN_TILE:
-					g.drawString("Spawn", 900, 120);
-					g.drawString("Adventurers enter here.", 900, 132);
+					g.drawString("Spawn", 900, base + 12*6);
+					g.drawString("Adventurers enter here.", 900, base + 12*7);
 					break;
 				case Tile.WARP_TILE:
-					g.drawString("Teleporter", 900, 120);
-					g.drawString("You can walk through it.", 900, 132);
+					g.drawString("Teleporter", 900, base + 12*6);
+					g.drawString("You can walk through it.", 900, base + 12*7);
 					break;
 				case Tile.DOOR_TILE:
-					g.drawString("Door", 900, 120);
-					g.drawString("Open: " + ((DoorTile)map.getTile(pick[0], pick[1], 1)).isOpen(), 900, 132);
-					g.drawString("You can sometimes walk on it.", 900, 144);
+					if(((DoorTile)map.getTile(pick[0], pick[1], 1)).isOpen())
+						g.drawString("Door (Open)", 900, base + 12*6);
+					else
+						g.drawString("Door (Closed)", 900, base + 12*6);
+					g.drawString("You can sometimes walk on it.", 900, base + 12*7);
 					break;
 				default:
-					g.drawString("Nothing of interest", 900, 120);
+					g.drawString("Nothing of interest", 900, base + 12*6);
 			}
 			Actor temp;
-			g.drawString("Layer 2:", 900, 168);
+			g.drawString("Layer 2:", 900, base + 12*9);
 			switch(map.getTile(pick[0], pick[1], 2).getType()){
 				case Tile.WALL_TILE:
-					g.drawString("Wall", 900, 180);
-					g.drawString("You can't walk on it.", 900, 192);
+					g.drawString("Wall", 900, base + 12*10);
+					g.drawString("You can't walk on it.", 900, base + 12*11);
 					break;
 				case Tile.FIGHTER:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Fighter", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Adventurer with a sword.", 900, 240);
+					g.drawString("Fighter", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Adventurer with a sword.", 900, base + 12*15);
 					break;
 				case Tile.RANGER:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Ranger", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Adventurer with a bow.", 900, 240);
+					g.drawString("Ranger", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Adventurer with a bow.", 900, base + 12*15);
 					break;
 				case Tile.HEALER:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Healer", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Adventurer with a wand.", 900, 240);
+					g.drawString("Healer", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Adventurer with a wand.", 900, base + 12*15);
 					break;
 				case Tile.SLIM:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Slim", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Kinda shady.", 900, 240);
+					g.drawString("Slim", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Kinda shady.", 900, base + 12*15);
 					break;
 				case Tile.IMP:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Imp", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Kinda deported.", 900, 240);
+					g.drawString("Imp", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Kinda deported.", 900, base + 12*15);
 					break;
 				case Tile.LIVING_WALL:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Wall", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Kinda stuck.", 900, 240);
+					g.drawString("Wall", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Kinda stuck.", 900, base + 12*15);
 					break;
 				case Tile.BULK:
 					temp = ((Actor)map.getTile(pick[0], pick[1], 2));
-					g.drawString("Bulk", 900, 180);
-					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, 192);
-					g.drawString("Attack: " + temp.getBaseAtt(), 900, 204);
-					g.drawString("Range: " + temp.getAttRange(), 900, 216);
-					g.drawString("Move: " + temp.getMoveRange(), 900, 228);
-					g.drawString("Kinda political.", 900, 240);
+					g.drawString("Bulk", 900, base + 12*10);
+					g.drawString("Health: " + temp.getCurrHP() + "/" + temp.getBaseHP(), 900, base + 12*11);
+					g.drawString("Attack: " + temp.getBaseAtt(), 900, base + 12*12);
+					g.drawString("Range: " + temp.getAttRange(), 900, base + 12*13);
+					g.drawString("Move: " + temp.getMoveRange(), 900, base + 12*14);
+					g.drawString("Kinda political.", 900, base + 12*15);
 					break;
 				default:
-					g.drawString("Nothing of interest", 900, 180);
+					g.drawString("Nothing of interest", 900, base + 12*10);
 			}
 			}
-		if(!cont && !end)
-			g.drawString("Turn Ended. Hit P/M3 to Pass Turn.", 900, 300);
+		}
+		if((state == 0 || state == 1) && !cont && !end){
+			g.setColor(Color.red);
+			if(action[turn] <= 0)
+				g.drawString("AP depleted.", 900, 372);
+			g.drawString("Turn Ended. Hit P/M3 to Pass Turn.", 900, 384);
+			g.setColor(Color.white);
+		}
+		if (state == 0 || state == 1){
+			g.drawString("Activity Log:", 900, 408);
+			for(int x = 0; x < log.size(); x++){
+				g.drawString(log.get(x), 900, 420 + x*12);
+			}
 		}
 	}
 	}
