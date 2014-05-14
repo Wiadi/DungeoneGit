@@ -12,6 +12,16 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+//FOR NETWORKING
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import javax.swing.JOptionPane;
+
 /**
  * Maintains a GameMap and associated Actors
  * Interprets user input to provide game control
@@ -38,6 +48,12 @@ public class Dungeone extends Canvas{
 	private MouseEvent event2;
 	private final static int WIDTH=50;
 	private final static int HEIGHT=40;
+	
+	//FOR NETWORKING
+	private boolean networked;
+	private ObjectOutputStream output;
+	private ObjectInputStream input;
+	private ServerSocket server;
 	
 	private int count;
 	
@@ -74,6 +90,10 @@ public class Dungeone extends Canvas{
 		};
 		addKeyListener(key);
 		addMouseListener(mouse);
+		
+		//FOR NETWORKING
+		networked=checkMode();
+		
 	}
 	
 	
@@ -872,5 +892,86 @@ public class Dungeone extends Canvas{
 			g.drawString("Turn Ended. Hit R/P/M3 to Pass Turn.", 900, 300);
 		}
 	}
+	}
+	
+	/**MAIN NETWORKING CODE BEGINS HERE**/
+	
+	public boolean checkMode()
+	{
+		while(true)
+			switch(JOptionPane.showOptionDialog(this, "Select a mode:"+'\n'+"(WARNING: NETWORKED MODE NOT CURRENTLY FUNCTIONAL, DO NOT SELECT)", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new String[]{"Hotseat","Networked"}, 0))
+			{
+				case 1: network();
+						return true;
+				case JOptionPane.CLOSED_OPTION: break;
+				default: output=null;
+						 input=null;
+						 server=null;
+						 return false;
+			}
+	}
+	
+	public void network()
+	{
+		switch(JOptionPane.showOptionDialog(null, "This computer will act as the", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new String[]{"Server","Client"}, null))
+		{
+			case 0: server();
+			case 1: return;
+		}
+	}
+	
+	public void server()
+	{
+		try {
+			server=new ServerSocket(0);
+			JOptionPane.showMessageDialog(null, "Server successfully created.\nYour IP address is "+InetAddress.getLocalHost().getHostAddress()+"\nYour port is "+server.getLocalPort());
+			Socket client=null;
+			boolean accepted=false;
+			server.setSoTimeout(60000);
+			JOptionPane.showMessageDialog(null, "Please wait for client connection. After one minute, operation will time out.");
+			while(!accepted)
+			{
+				try
+				{
+					client=server.accept();
+					accepted=true;
+				}
+				catch(SocketTimeoutException e)
+				{
+					if(JOptionPane.showOptionDialog(null, "Operation timed out. Try again or quit?", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new String[]{"Try again","Quit"}, 1)==1)
+					{
+						server.close();
+						System.exit(0);
+					}
+				}
+			}
+			JOptionPane.showMessageDialog(null, "Connection successful.");
+			output=new ObjectOutputStream(client.getOutputStream());
+			input=new ObjectInputStream(client.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void client()
+	{
+		try {
+			while(true)
+			{
+				try
+				{
+					Socket client=new Socket(JOptionPane.showInputDialog(null, "Please input server IP address."), Integer.parseInt(JOptionPane.showInputDialog(null, "Please input server port.")));
+					JOptionPane.showMessageDialog(null, "Connection successful.");
+					output=new ObjectOutputStream(client.getOutputStream());
+					input=new ObjectInputStream(client.getInputStream());
+				}
+				catch(NumberFormatException e)
+				{
+					JOptionPane.showMessageDialog(null, "Invalid port number.");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
