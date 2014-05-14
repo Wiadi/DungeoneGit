@@ -1097,7 +1097,7 @@ public class Dungeone extends Canvas{
 			g.setColor(Color.red);
 			if(action[turn] <= 0)
 				g.drawString("AP depleted.", 900, 372);
-			g.drawString("Turn Ended. Hit P/M3 to Pass Turn.", 900, 384);
+			g.drawString("Turn Ended. Hit R/M3 to Pass Turn.", 900, 384);
 			g.setColor(Color.white);
 		}
 		if (state == 0 || state == 1){
