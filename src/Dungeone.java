@@ -952,7 +952,7 @@ public class Dungeone extends Canvas{
 		g.drawString("Space - Set P", 0, 168);
 		g.drawString("Z - Move P to S", 0, 180);
 		g.drawString("X - Attack S w/ P", 0, 192);
-		g.drawString("C - Create at S", 0, 204);
+		g.drawString("C/1/2 - Create at S", 0, 204);
 		g.drawString("R - Pass Turn", 0, 216);
 		g.drawString("P - Toggle Range", 0, 228);
 		g.drawString("Enter - Help", 0, 240);
