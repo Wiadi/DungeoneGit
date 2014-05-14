@@ -752,7 +752,7 @@ public class Dungeone extends Canvas{
 			g.drawString("Objective - Goal of this game. Find it or protect it.", 600, 324);
 			g.drawString("Spawn - Start point for the adventurers. Also a source of vision.", 600, 336);
 			g.drawString("Teleporters - Connect disconnected tunnels. Can move and attack through, but vision is limited.", 600, 348);
-			g.setColor(new Color(0, 100, 0));
+			g.setColor(new Color(0, 200, 0));
 			g.fillRect(580, 312, 12, 12);
 			g.setColor(new Color(110, 139, 61));
 			g.fillRect(580, 324, 12, 12);
@@ -872,7 +872,7 @@ public class Dungeone extends Canvas{
 						default:	
 							switch(map.getTile(i, j, 1).tileType){
 								case Tile.OBJECTIVE:
-									g.setColor(new Color(0, 100, 0)); //dark green
+									g.setColor(new Color(0, 200, 0)); //dark green
 									break;
 								case Tile.SPAWN_TILE:
 									g.setColor(new Color(110, 139, 61)); //dark olive green
