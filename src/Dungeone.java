@@ -1131,7 +1131,7 @@ public class Dungeone extends Canvas{
 		switch(JOptionPane.showOptionDialog(null, "This computer will act as the", null, JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, new String[]{"Server","Client"}, null))
 		{
 			case 0: server();
-			case 1: return;
+			case 1: client();
 		}
 	}
 	
@@ -1179,6 +1179,7 @@ public class Dungeone extends Canvas{
 					JOptionPane.showMessageDialog(null, "Connection successful.");
 					output=new ObjectOutputStream(client.getOutputStream());
 					input=new ObjectInputStream(client.getInputStream());
+					return;
 				}
 				catch(NumberFormatException e)
 				{
