@@ -739,9 +739,9 @@ public class Dungeone extends Canvas{
 			g.drawString("Walls - Can't go through 'em. Simple enough.", 600, 276);
 			g.drawString("Floors - You walk on 'em. Simple enough.", 600, 288);
 			g.drawString("Doors - Attack them to open or close them. Closed doors block movement and vision.", 600, 300);
-			g.setColor(Color.darkGray);
+			g.setColor(new Color(100, 100, 100));
 			g.fillRect(580, 264, 12, 12);
-			g.setColor(Color.lightGray);
+			g.setColor(new Color(200, 200, 200));
 			g.fillRect(580, 276, 12, 12);
 			g.setColor(new Color(110, 63, 25));
 			g.fillRect(580, 288, 12, 12);
@@ -846,7 +846,7 @@ public class Dungeone extends Canvas{
 				if(state == 0 || state == 1){ //dungeonee sees by units and spawn, dungeoneer sees all
 					switch(map.getTile(i, j, 2).tileType){
 						case Tile.WALL_TILE:
-							g.setColor(Color.darkGray);
+							g.setColor(new Color(100, 100, 100));
 							break;
 						case Tile.FIGHTER:
 							g.setColor(new Color(0, 154, 205)); //deep sky blue
@@ -889,7 +889,7 @@ public class Dungeone extends Canvas{
 								default:
 									switch(map.getTile(i, j, 0).tileType){
 										case Tile.FLOOR_TILE:
-											g.setColor(Color.lightGray);
+											g.setColor(new Color(200, 200, 200));
 											break;
 										default:
 											g.setColor(Color.black);
@@ -952,7 +952,7 @@ public class Dungeone extends Canvas{
 		g.drawString("Space - Set P", 0, 168);
 		g.drawString("Z - Move P to S", 0, 180);
 		g.drawString("X - Attack S w/ P", 0, 192);
-		g.drawString("C/1/2 - Create at S", 0, 204);
+		g.drawString("C/# - Create at S", 0, 204);
 		g.drawString("R - Pass Turn", 0, 216);
 		g.drawString("P - Toggle Range", 0, 228);
 		g.drawString("Enter - Help", 0, 240);
@@ -961,7 +961,7 @@ public class Dungeone extends Canvas{
 		g.drawString("M1 - Set S and P", 0, 276);
 		g.drawString("M1 on P - Create", 0, 288);
 		g.drawString("M2 - Set S", 0, 300);
-		g.drawString("M2 - Move to S w/ P", 0, 312);
+		g.drawString("M2 - Move P to S", 0, 312);
 		g.drawString("M2 - Attack S w/ P ", 0, 324);
 		g.drawString("M3 - Pass Turn", 0, 336);
 		
