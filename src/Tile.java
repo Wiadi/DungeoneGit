@@ -1,7 +1,7 @@
 /**
  * The basic unit of the game. Every layer of every square of the map holds a tile; tile
  * types include objects, structural features, living creatures, and empty space.
- * @author 941923
+ * @author Andrew Simler
  */
 public abstract class Tile
 {	
@@ -52,7 +52,12 @@ public abstract class Tile
 	{
 		return tileType;
 	}
-	
+	/**
+	 * Changes the tile's position to a new one.
+	 * @param x - the new x position
+	 * @param y - the new y position
+	 * @return the tile moved
+	 */
 	public Tile changePos(int x, int y)
 	{
 		xPos=x;
@@ -69,12 +74,10 @@ public abstract class Tile
 	{
 		return false;
 	}
-	
 	public int getX()
 	{
 		return xPos;
 	}
-	
 	public int getY()
 	{
 		return yPos;

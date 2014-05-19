@@ -1,7 +1,10 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
+/**
+ * This class is used to generate the 5x5 "rooms" which are assembled into random maps.
+ * @author Andrew Simler
+ */
 public class Room
 {
 	private Tile[][][] layout;
@@ -50,7 +53,9 @@ public class Room
 		}
 		readRoom();
 	}
-	
+	/**
+	 * Reads the data for a given room from a text file corresponding to the room type.
+	 */
 	private void readRoom()
 	{
 		try
@@ -100,47 +105,12 @@ public class Room
 			System.out.println("Error - room file not found");
 		}
 	}
-	
 	public Tile[][][] getLayout()
 	{
 		return layout;
 	}
-	
 	public int getType()
 	{
 		return type;
 	}
-	
-//	public boolean checkAdj(Room adj, int face)
-//	{
-//		switch(type)
-//		{
-//			case SPAWN:
-//			case ROOM_3_SQUARE: int x,y;
-//								if(face==0 || face==2)
-//								{
-//									y=(HEIGHT-1)*face/2;
-//										for(x=0;x<WIDTH;x++)
-//											for(int layer=0;layer<3;layer++)
-//												if(adj.getLayout()[x][HEIGHT-1-y][layer].getType()==Tile.EMPTY_TILE)
-//													layout[x][y][layer]=new DoorTile(map,x,y);
-//								}
-//								else
-//								{
-//									x=(WIDTH-1)*(face-1)/2;
-//									for(y=0;y<HEIGHT;y++)
-//										for(int layer=0;layer<3;layer++)
-//											if(adj.getLayout()[WIDTH-1-x][y][layer].getType()==Tile.EMPTY_TILE)
-//												layout[x][y][layer]=new DoorTile(map,x,y);
-//								}
-//								return true;
-//			case CORRIDOR_INTERSECT: if(face==0 || face==2)
-//										for(int layer=0;layer<3;layer++)
-//											if(adj.getLayout()[WIDTH/2][(HEIGHT-1)*(1-face/2)][layer].getType()==Tile.EMPTY_TILE)
-//												layout[WIDTH/2][(HEIGHT-1)*face/2][layer]=new DoorTile(map,WIDTH/2,(HEIGHT-1)*face/2);
-//			
-//		}
-//		return false;
-//	}
-	
 }

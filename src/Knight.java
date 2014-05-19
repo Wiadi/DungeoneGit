@@ -1,4 +1,7 @@
-
+/**
+ * A powerful and durable Monster that moves somewhat awkwardly, like a chess knight. NOTE: not currently in use.
+ * @author Andrew Simler
+ */
 public class Knight extends Monster
 {
 	public Knight(GameMap m, int x, int y)

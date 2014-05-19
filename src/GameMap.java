@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * Stores all map data for the current floor in three two-dimensional grids and modifies
  * those map data as actions are taken.
- * @author 941923
+ * @author Andrew Simler
  */
 public class GameMap
 {
@@ -118,7 +118,8 @@ public class GameMap
 		return (tiles[objX][objY][2].getType()>=Tile.ADVENTURER && tiles[objX][objY][2].getType()<Tile.MONSTER);
 	}
 	/**
-	 * Generates the starting map layout.
+	 * Generates the starting map layout from a text file.
+	 * NOTE: not currently in use.
 	 */
 	public void genMap()
 	{
@@ -172,7 +173,8 @@ public class GameMap
 		}
 	}
 	/**
-	 * Temporary "tester" method to check whether various map methods work properly.
+	 * "Tester" method to check whether various map methods work properly by displaying a textual representation of the map.
+	 * NOTE: not currently in use.
 	 */
 	private void dispMap()
 	{
@@ -189,11 +191,11 @@ public class GameMap
 	}
 	/**
 	 * Teleports the target to a random valid location on the map.
+	 * NOTE: not currently in use.
 	 * @param xStart - x location of the Actor causing the teleportation
 	 * @param yStart - y location of the Actor causing the teleportation
 	 * @param xEnd - x location of the target to be teleported
 	 * @param yEnd - y location of the target to be teleported
-	 * @param layer - layer in which the Actor and target are located
 	 * @return true if (xStart, yStart) refers to the location of an Actor with Baleful Teleport, false else
 	 */
 	public boolean baleTele(int xStart, int yStart, int xEnd, int yEnd)
@@ -207,7 +209,16 @@ public class GameMap
 			}
 		return false;
 	}
-	
+	/**
+	 * Revives an Adventurer at a given location.
+	 * NOTE: not currently in use.
+	 * @param xUser - x location of the Actor causing the revival
+	 * @param yUser - y location of the Actor causing the revival
+	 * @param xTarget - x location at which the Adventurer will be revived
+	 * @param yTarget - y location at which the Adventurer will be revived
+	 * @param a - the Adventurer to be revived
+	 * @return true if the revive operation was successful, false else
+	 */
 	public boolean revive(int xUser, int yUser, int xTarget, int yTarget, Adventurer a)
 	{
 		if(tiles[xUser][yUser][2].getType()>=Tile.ADVENTURER)
@@ -219,7 +230,9 @@ public class GameMap
 				}
 		return false;
 	}
-	
+	/**
+	 * Randomly generates the starting map by assembling a set of premade 5x5 "rooms."
+	 */
 	private void randMap()
 	{
 		int width=tiles.length;
@@ -248,7 +261,10 @@ public class GameMap
 		warpConnect();
 		toggleDoors();
 	}
-
+	/**
+	 * Eliminates redundant or useless doors from the map.
+	 * Necessary because of the generality of "room" layouts.
+	 */
 	private void clearDoors()
 	{
 		int open=0;
@@ -274,12 +290,23 @@ public class GameMap
 				open=0;
 			}
 	}
-	
+	/**
+	 * Gets the size of the map.
+	 * @return an array containing the width of the map in [0] and the height of the map in [1]
+	 */
 	public int[] getSize()
 	{
 		return new int[]{tiles.length,tiles[0].length};
 	}
-	
+	/**
+	 * A search algorithm used to find a path, if any exists, between two tiles.
+	 * @param xs - x location of the starting tile
+	 * @param ys - y location of the starting tile
+	 * @param xe - x location of the target tile
+	 * @param ye - y location of the target tile
+	 * @return if a path exists: an ArrayList holding that path from start to end, with each point denoted by an int[] formatted {x,y}
+	 * 		   if no path exists: null
+	 */
 	public ArrayList<int[]> aStar(int xs, int ys, int xe, int ye)
 	{
 		boolean[][] closedSet=new boolean[tiles.length][tiles[0].length];
@@ -309,7 +336,7 @@ public class GameMap
 				return reconstructPath(cameFrom, new int[]{xe,ye});
 			openSet[current[0]][current[1]]=false;
 			closedSet[current[0]][current[1]]=true;
-			for(int[] i:neighborList(current, new ArrayList<int[]>()))
+			for(int[] i:neighborList(current))
 			{
 				if(closedSet[i[0]][i[1]])
 					continue;
@@ -325,7 +352,13 @@ public class GameMap
 		}
 		return null;
 	}
-
+	/**
+	 * Reconstructs the path found by aStar into the ArrayList format aStar returns.
+	 * @param cameFrom - an array representing the map, with each node in the path indicating the previous node in the path,
+	 * 					 and each node not in the path having a value of null
+	 * @param loc - the endpoint of the path
+	 * @return the reconstructed path in the same format returned by aStar
+	 */
 	private ArrayList<int[]> reconstructPath(String[][] cameFrom, int[] loc)
 	{
 		ArrayList<int[]> path=new ArrayList<int[]>();
@@ -334,7 +367,11 @@ public class GameMap
 		path.add(loc);
 		return path;
 	}
-	
+	/**
+	 * Converts the String data stored in cameFrom into a location formatted as an int[] {x,y}.
+	 * @param loc - the String representing the location
+	 * @return the int[] representing the location
+	 */
 	private int[] parseLoc(String loc)
 	{
 		boolean flip=true;
@@ -353,8 +390,12 @@ public class GameMap
 		}
 		return new int[]{Integer.parseInt(x),Integer.parseInt(y)};
 	}
-	
-	private ArrayList<int[]> neighborList(int[] loc, ArrayList<int[]> check)
+	/**
+	 * Lists the tiles neighboring a given tile over which a path can move.
+	 * @param loc - the location of the tile the neighbors of which are to be found, formatted {x,y}
+	 * @return an ArrayList of the valid locations neighboring loc, each formatted as loc
+	 */
+	private ArrayList<int[]> neighborList(int[] loc)
 	{
 		ArrayList<int[]> neighbors=new ArrayList<int[]>();
 		int x=loc[0], y=loc[1];
@@ -380,7 +421,11 @@ public class GameMap
 					neighbors.add(i);
 		return neighbors;
 	}
-	
+	/**
+	 * Checks whether a 2D array of booleans is entirely false.
+	 * @param set - the array to check
+	 * @return false if any node in the array to check is true, true else
+	 */
 	private boolean checkEmpty(boolean[][] set)
 	{
 		for(int x=0;x<set.length;x++)
@@ -389,12 +434,18 @@ public class GameMap
 					return false;
 		return true;
 	}
-	
+	/**
+	 * Checks whether it is possible for a path to pass over a space indicated by the Tiles it holds on each layer.
+	 * @param t - the tiles on the given location, formatted {layer 0, layer 1, layer 2}
+	 * @return true if the given location can be passed over, false else
+	 */
 	private boolean canMoveOver(Tile[] t)
 	{
 		return (t[2].getType()==Tile.EMPTY_TILE && (t[1].getType()!=Tile.DOOR_TILE || ((DoorTile)t[1]).isOpen()));
 	}
-	
+	/**
+	 * Opens all closed doors and closes all open doors on the map.
+	 */
 	public void toggleDoors()
 	{
 		for(int x=0;x<tiles.length;x++)
@@ -402,7 +453,10 @@ public class GameMap
 				if(tiles[x][y][1].getType()==Tile.DOOR_TILE)
 					((DoorTile)tiles[x][y][1]).toggleOpen();
 	}
-	
+	/**
+	 * Links all otherwise unreachable areas of the randomly-generated map to the area containing the Spawn tile by adding
+	 * one warp tile to the Spawn area and one to each unreachable area.
+	 */
 	private void warpConnect()
 	{
 		int x=spnX,y=spnY;
@@ -442,7 +496,12 @@ public class GameMap
 		}
 		System.out.println("Warped");
 	}
-	
+	/**
+	 * Lists the locations which cannot be reached from a given location.
+	 * @param x - x position of the given location
+	 * @param y - y position of the given location
+	 * @return a 2D array of booleans corresponding to the map, each true if unreachable and false else
+	 */
 	private boolean[][] listUnreach(int x, int y)
 	{
 		boolean[][] unreach=new boolean[tiles.length][tiles[0].length];
@@ -456,7 +515,10 @@ public class GameMap
 			}
 		return unreach;
 	}
-	
+	/**
+	 * Checks whether an Adventurer is standing on a warp tile.
+	 * @return true if an Adventurer is standing on a warp tile, false else
+	 */
 	public boolean checkWarp()
 	{
 		for(int[] i:warpTiles)

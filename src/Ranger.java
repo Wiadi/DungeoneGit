@@ -1,4 +1,7 @@
-
+/**
+ * An Adventurer that can attack from a distance.
+ * @author Andrew Simler
+ */
 public class Ranger extends Adventurer
 {
 	public Ranger(GameMap m, int x, int y)

@@ -1,6 +1,6 @@
 /**
  * Designates the room in which adventurers will appear in a given level.
- * @author 941923
+ * @author Andrew Simler
  */
 public class SpawnTile extends Tile
 {

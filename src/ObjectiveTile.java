@@ -1,6 +1,6 @@
 /**
  * The objective, which the Adventurers must reach to clear the level.
- * @author 941923
+ * @author Andrew Simler
  */
 public class ObjectiveTile extends Tile
 {

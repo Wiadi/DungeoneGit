@@ -1,6 +1,6 @@
 /**
  * Adventurers are the Actors controlled by the Dungeonee.
- * @author 941923
+ * @author Andrew Simler
  */
 public abstract class Adventurer extends Actor
 {
@@ -10,7 +10,6 @@ public abstract class Adventurer extends Actor
 		super(m,x,y);
 		tileType=ADVENTURER;
 	}
-	
 	public int getVisRange()
 	{
 		return visionRange;

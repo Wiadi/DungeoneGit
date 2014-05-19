@@ -1,4 +1,7 @@
-
+/**
+ * An Adventurer capable of healing other Adventurers rather than hurting Monsters.
+ * @author Andrew Simler
+ */
 public class Healer extends Adventurer
 {
 	public Healer(GameMap m, int x, int y)

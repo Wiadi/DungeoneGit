@@ -1,6 +1,6 @@
 /**
  * An empty tile, placed to avoid having to deal with obnoxious null pointer exceptions.
- * @author 941923
+ * @author Andrew Simler
  */
 public class EmptyTile extends Tile
 {

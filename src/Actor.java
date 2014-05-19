@@ -1,7 +1,7 @@
 /**
  * Actors are tiles which can act - the monsters populating the map and the adventurers
  * exploring it.
- * @author 941923
+ * @author Andrew Simler
  */
 public abstract class Actor extends Tile
 {

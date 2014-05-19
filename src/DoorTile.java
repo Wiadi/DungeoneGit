@@ -1,6 +1,6 @@
 /**
  * A door tile, which can be open (permitting movement) or closed (blocking it).
- * @author 941923
+ * @author Andrew Simler
  */
 public class DoorTile extends Tile
 {

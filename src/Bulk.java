@@ -1,4 +1,7 @@
-
+/**
+ * A bulkier, more damaging, but slower Monster.
+ * @author Andrew Simler
+ */
 public class Bulk extends Monster
 {
 	public Bulk(GameMap m, int x, int y)

@@ -1,6 +1,6 @@
 /**
  * Monsters are the Actors controlled and placed by the Dungeoneer.
- * @author 941923
+ * @author Andrew Simler
  */
 public abstract class Monster extends Actor
 {

@@ -1,4 +1,7 @@
-
+/**
+ * Exactly what it sounds like: a Monster with no use except blocking passages as though it were a wall.
+ * @author Andrew Simler
+ */
 public class LivingWall extends Monster
 {
 	public LivingWall(GameMap m, int x, int y)

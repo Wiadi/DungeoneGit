@@ -1,6 +1,6 @@
 /**
  * A wall tile, used to construct the walls of the map.
- * @author 941923
+ * @author Andrew Simler
  */
 public class WallTile extends Tile
 {

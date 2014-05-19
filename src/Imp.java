@@ -1,6 +1,6 @@
 /**
- * A frustrating but individually harmless Monster, the Imp teleports its enemies.
- * @author 941923
+ * A frustrating but individually harmless Monster, the Imp teleports its enemies. NOTE: not currently in use.
+ * @author Andrew Simler
  */
 public class Imp extends Monster
 {

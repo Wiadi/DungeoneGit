@@ -1,6 +1,6 @@
 /**
  * The most basic type of Monster, a slim can walk around and hit things.
- * @author 941923
+ * @author Andrew Simler
  */
 public class Slim extends Monster
 {
