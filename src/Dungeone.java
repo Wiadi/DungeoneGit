@@ -23,41 +23,42 @@ import java.net.SocketTimeoutException;
 import javax.swing.JOptionPane;
 
 /**
- * Maintains a GameMap and associated Actors
+ * Maintains a GameMap and associated Actors and variables
  * Interprets user input to provide game control
  * Controls output display
+ * Creates/Connects to a server to provide multiple player functionality (In Progress)
  * @author Jacob Ryder
  */
 @SuppressWarnings("serial")
 public class Dungeone extends Canvas{
-	private GameMap map;
-	private ArrayList<Adventurer> party;
-	private ArrayList<Adventurer> dead;
-	private ArrayList<Monster> mobs;
-	private int turn;	//0-Dungeonee, 1-Dungeoneer
-	private int[] action;	//0-Dungeonee, 1-Dungeoneer
-	private int[] select; //mobile
-	private int[] pick; //fixed
-	private int state; //-1-start, 0-setup, 1-standard, 2-switch
-	private boolean ranges;
-	private boolean help;
-	private ArrayList<String> log;
-	private boolean cont;
-	private boolean end;
-	private Graphics g;
-	private BufferedImage buff;
-	private KeyEvent event;
-	private MouseEvent event2;
-	private final static int WIDTH=50;
-	private final static int HEIGHT=40;
+	private GameMap map;					//stores the map the game is played in
+	private ArrayList<Adventurer> party;	//stores the adventurers
+	private ArrayList<Adventurer> dead;		//stores any killed adventurers
+	private ArrayList<Monster> mobs;		//stores the monsters
+	private int turn;						//denotes whose turn it is: 0-Dungeonee, 1-Dungeoneer
+	private int[] action;					//stores the amount of action points held by each player: 0-Dungeonee, 1-Dungeoneer
+	private int[] select; 					//mobile focus for actions
+	private int[] pick; 					//fixed focus for actions
+	private int state; 						//denotes the current state of the game: -1-start, 0-setup, 1-standard, 2-switch
+	private boolean ranges;					//toggles range indicators
+	private boolean help;					//toggles the instruction screen
+	private ArrayList<String> log;			//stores a text log of recent actions
+	private boolean cont;					//marks whether actions can be taken; requires confirmation to end turn
+	private boolean end;					//marks whether a turn is fully completed
+	private Graphics g;						//graphics object maintained by the canvas
+	private BufferedImage buff;				//buffered image used for double buffering
+	private KeyEvent event;					//stores the most recent keyEvent
+	private MouseEvent event2;				//stores the most recent mouseEvent
+	private final static int WIDTH=50;		//width of the map
+	private final static int HEIGHT=40;		//height of the map
+	private int count;						//total number of frames displayed
 	
 	//FOR NETWORKING
-	private boolean networked;
-	private ObjectOutputStream output;
-	private ObjectInputStream input;
-	private ServerSocket server;
+	private boolean networked;				//marks if a connection has been successful
+	private ObjectOutputStream output;		//sends information outward through a connection
+	private ObjectInputStream input;		//receives information through a connection
+	private ServerSocket server;			//maintains a server
 	
-	private int count;
 	
 	public static void main(String[] args){
 		Frame frame = new Frame();
@@ -138,6 +139,7 @@ public class Dungeone extends Canvas{
 	 * Alternates turns until one of two end conditions are met:
 	 * The Dungeoneer wins if all adventurers are removed from the map
 	 * The Dungeonee wins if an adventurer reaches the objective
+	 * Displays a victory screen based on end condition
 	 */
 	public void run(){
 		update();
@@ -150,8 +152,8 @@ public class Dungeone extends Canvas{
 	}
 	
 	/**
-	 * Interprets a turn for either the Dungeoneer or Dungeonee
-	 * Uses KeyEvents to control actions, each expending Action Points
+	 * Interprets a full turn for either the Dungeoneer or Dungeonee
+	 * Uses KeyEvents and MouseEvents to control actions, each expending Action Points
 	 * Turn ends when the player passes or no Action Points are left
 	 */
 	public void turn(){
@@ -470,6 +472,7 @@ public class Dungeone extends Canvas{
 	
 	/**
 	 * Attempts to create an actor at the selected tile
+	 * @param type: the type of tile to be created (separate from Tile hierarchy)
 	 */
 	public void create(int type){
 	if(turn == 0){
@@ -638,6 +641,7 @@ public class Dungeone extends Canvas{
 	
 	/**
 	 * Buffers and displays a new frame
+	 * Adjusts a counter of frames displayed
 	 */
 	public void update(){
 		buffer();
@@ -648,7 +652,8 @@ public class Dungeone extends Canvas{
 	}
 	
 	/**
-	 * Creates an image to be displayed later
+	 * Creates an image to be displayed
+	 * Image format varies based on the state of the game and the current turn
 	 */
 	public void buffer(){
 		Graphics2D g = buff.createGraphics();
